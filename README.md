@@ -1,16 +1,27 @@
-# React + Vite
+# 🌦️ Weather Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Современное адаптивное веб-приложение для просмотра текущей погоды в любой точке мира с динамической сменой темы и плавными анимациями.
 
-Currently, two official plugins are available:
+## ✨ Особенности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔍 **Поиск по городам:** мгновенный запрос данных о погоде через WeatherAPI.
+- 📍 **Геолокация:** определение погоды по координатам текущего местоположения в один клик.
+- 🎨 **Динамический UI:** адаптивный градиентный фон, меняющийся в зависимости от погодных условий и времени суток.
+- ⚡ **Мягкие анимации:** отсутствие дерганий при перезагрузке данных благодаря плавному оверлею загрузки и fade-in эффектам.
+- 📱 **Full Responsive:** адаптивный интерфейс, оптимизированный под мобильные и десктопные экраны.
 
-## React Compiler
+## 🛠️ Стек технологий
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19**
+- **Vite**
+- **Lucide React** (иконки)
+- **Vanilla CSS** (Glassmorphism, CSS Transitions & Keyframes)
+- **WeatherAPI**
 
-## Expanding the Oxlint configuration
+## 🚀 Локальный запуск
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+1. Клонируйте репозиторий:
+   ```bash
+   git clone [https://github.com/bossmerej-ship-it/weather-app.git](https://github.com/bossmerej-ship-it/weather-app.git)
+   cd weather-app
+   
