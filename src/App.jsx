@@ -120,6 +120,7 @@ export default function App() {
           type="text"
           className="search-input"
           placeholder="Поиск города..."
+          aria-label="Название города"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -131,12 +132,13 @@ export default function App() {
           onClick={handleGeolocation}
           className="btn btn-icon"
           title="Моё местоположение"
+          aria-label="Моё местоположение"
         >
           <MapPin size={18} />
         </button>
       </form>
 
-      {error && <div className="error-msg">{error}</div>}
+      {error && <div className="error-msg" role="alert">{error}</div>}
 
       {weather && (
         <div className="content-wrapper" key={weather.location.name}>
