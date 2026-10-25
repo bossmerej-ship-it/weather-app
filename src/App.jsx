@@ -47,13 +47,19 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const fetchWeather = async (searchQuery) => {
-    if (!searchQuery) return;
+    const normalizedQuery = searchQuery.trim();
+    if (!normalizedQuery) return;
     setLoading(true);
     setError(null);
 
     try {
+      const params = new URLSearchParams({
+        key: API_KEY,
+        q: normalizedQuery,
+        lang: 'ru',
+      });
       const res = await fetch(
-        `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${searchQuery}&lang=ru`
+        `https://api.weatherapi.com/v1/current.json?${params}`
       );
 
       if (!res.ok) {
