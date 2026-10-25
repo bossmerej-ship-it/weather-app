@@ -45,7 +45,7 @@
    npm ci
    ```
 
-3. **Создайте файл `.env` в корне проекта** и укажите ключ WeatherAPI:
+3. **Скопируйте `.env.example` в `.env` в корне проекта** и укажите ключ WeatherAPI:
    ```dotenv
    VITE_WEATHER_API_KEY=your_weatherapi_key
    ```
