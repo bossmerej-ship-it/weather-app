@@ -28,13 +28,47 @@
 ## Установка и запуск
 
 ### Требования
-- Node.js (версии 18 или выше)
-- npm / pnpm / yarn
+- Node.js 22.12 или новее (согласно требованиям Vite 8)
+- npm
 - API-ключ от [WeatherAPI](https://www.weatherapi.com/)
 
 ### Шаги
 
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone [https://github.com/bossmerej-ship-it/weather-app.git](https://github.com/bossmerej-ship-it/weather-app.git)
+   git clone https://github.com/bossmerej-ship-it/weather-app.git
    cd weather-app
+   ```
+
+2. **Установите зависимости из lock-файла:**
+   ```bash
+   npm ci
+   ```
+
+3. **Создайте файл `.env` в корне проекта** и укажите ключ WeatherAPI:
+   ```dotenv
+   VITE_WEATHER_API_KEY=your_weatherapi_key
+   ```
+   После изменения `.env` перезапустите сервер разработки. Переменные с префиксом `VITE_` попадают в браузерную сборку: используйте отдельный ключ с подходящими ограничениями и квотой.
+
+4. **Запустите приложение:**
+   ```bash
+   npm run dev
+   ```
+   Откройте адрес, который Vite выведет в терминале.
+
+### Проверка и сборка
+
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+Готовая сборка находится в `dist`. Перед сборкой на Vercel задайте `VITE_WEATHER_API_KEY` в настройках окружения проекта, затем запустите новый деплой.
+
+### Использование
+
+- При открытии приложение загружает погоду в Астане.
+- Введите название города и нажмите Enter или кнопку поиска.
+- Кнопка с меткой местоположения запрашивает разрешение браузера на геолокацию. Для неё нужен HTTPS или `localhost`.
