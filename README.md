@@ -4,6 +4,8 @@
 
 [Демо на Vercel](https://weather-app-sage-six-68.vercel.app)
 
+[English quick start](#english-quick-start)
+
 ---
 
 ## Основной функционал
@@ -72,3 +74,46 @@ npm run preview
 - При открытии приложение загружает погоду в Астане.
 - Введите название города и нажмите Enter или кнопку поиска.
 - Кнопка с меткой местоположения запрашивает разрешение браузера на геолокацию. Для неё нужен HTTPS или `localhost`.
+
+---
+
+## English quick start
+
+A React weather dashboard with city search, browser geolocation, and themes that follow the weather and time of day.
+
+### Requirements
+
+- Node.js 22.12 or newer and npm
+- A [WeatherAPI](https://www.weatherapi.com/) key
+
+### Run locally
+
+1. Clone the repository and install the locked dependencies:
+   ```bash
+   git clone https://github.com/bossmerej-ship-it/weather-app.git
+   cd weather-app
+   npm ci
+   ```
+
+2. Copy `.env.example` to `.env` in the project root and set your key:
+   ```dotenv
+   VITE_WEATHER_API_KEY=your_weatherapi_key
+   ```
+   Restart the development server after changing `.env`. Variables prefixed with `VITE_` are included in the browser bundle, so use a dedicated key with appropriate restrictions and a quota.
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   Open the local URL printed by Vite. The dashboard initially shows the weather in Astana. Search for another city or use the location button; geolocation requires HTTPS or `localhost`.
+
+### Check and build
+
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+The production build is written to `dist`. For Vercel, set `VITE_WEATHER_API_KEY` in the project's environment settings before deploying.
+
