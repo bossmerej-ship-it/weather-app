@@ -1,119 +1,90 @@
-# Weather Dashboard
+# NEBO — погода в моменте
 
-Веб-приложение для отслеживания текущей погоды по всему миру. Поддерживает поиск по городам, определение координат через геолокацию браузера и автоматически подстраивает тему под погодные условия и время суток.
+Погода в своём ритме: приложение с живыми пейзажами, поиском городов и текущими погодными показателями.
 
-[Демо на Vercel](https://weather-app-sage-six-68.vercel.app)
+**[Открыть приложение](https://weather-app-sage-six-68.vercel.app)**
 
-[English quick start](#english-quick-start)
+## Возможности
 
----
+- Поиск города на русском и английском, быстрый переход в Астану, Алматы, Лондон и Токио.
+- Определение местоположения по кнопке «Где я» с разрешения браузера.
+- Температура, ощущаемая температура, влажность, ветер и давление из WeatherAPI.
+- Переключение °C / °F с сохранением выбора на устройстве.
+- Автоматическая атмосфера по погоде и времени суток: ясное небо, облака, дождь, снег, гроза, туман и ночь.
+- Ручной выбор шести сцен: «Авто», «Ясно», «Облака», «Дождь», «Снег», «Ночь». Меняется только фон; реальные погодные показатели остаются прежними.
+- Плавные переходы между сценами, движение облаков, дождь, снег и звёзды.
+- Параллакс от движения мыши и световые круги с частицами по клику на пейзаж. Кнопка фона доступна с клавиатуры.
+- Приостановка декоративной анимации и поддержка `prefers-reduced-motion`.
+- Адаптивный интерфейс от 320px; русские подписи, видимый фокус, доступные названия и сообщения об ошибках.
 
-## Основной функционал
+Пейзажи иллюстрируют настроение, а не конкретный город. Звука нет. Приложение показывает текущую погоду, без выдуманных прогнозов и демонстрационных значений.
 
-- **Поиск и геолокация:** поиск по названию любого города или определение погоды в один клик по текущему местоположению (HTML5 Geolocation API).
-- **Динамический интерфейс:** градиентный фон и визуальные элементы меняются в зависимости от погоды (ясно, дождь, снег, гроза) и времени суток (день/ночь).
-- **Стеклянный UI (Glassmorphism):** аккуратный интерфейс на чистом CSS с полупрозрачными карточками, блюром и плавными переходами состояний без скачков верстки.
-- **Адаптивность:** корректное отображение на смартфонах, планшетах и мониторах.
+## Локальный запуск
 
----
-
-## Стек технологий
-
-- **Фреймворк:** React 19
-- **Сборщик:** Vite
-- **Стилизация:** Vanilla CSS (CSS Variables, Flexbox/Grid, Glassmorphism, Keyframe animations)
-- **Иконки:** Lucide React
-- **Данные:** [WeatherAPI](https://www.weatherapi.com/)
-
----
-
-## Установка и запуск
-
-### Требования
-- Node.js 22.12 или новее (согласно требованиям Vite 8)
-- npm
-- API-ключ от [WeatherAPI](https://www.weatherapi.com/)
-
-### Шаги
-
-1. **Клонируйте репозиторий:**
-   ```bash
-   git clone https://github.com/bossmerej-ship-it/weather-app.git
-   cd weather-app
-   ```
-
-2. **Установите зависимости из lock-файла:**
-   ```bash
-   npm ci
-   ```
-
-3. **Скопируйте `.env.example` в `.env` в корне проекта** и укажите ключ WeatherAPI:
-   ```dotenv
-   VITE_WEATHER_API_KEY=your_weatherapi_key
-   ```
-   После изменения `.env` перезапустите сервер разработки. Переменные с префиксом `VITE_` попадают в браузерную сборку: используйте отдельный ключ с подходящими ограничениями и квотой.
-
-4. **Запустите приложение:**
-   ```bash
-   npm run dev
-   ```
-   Откройте адрес, который Vite выведет в терминале.
-
-### Проверка и сборка
+Требуются **Node.js 22.12+** и npm. Для деплоя используется Node.js 24.
 
 ```bash
+git clone https://github.com/bossmerej-ship-it/weather-app.git
+cd weather-app
+npm ci
+```
+
+Скопируйте `.env.example` в `.env.local` и укажите собственный ключ [WeatherAPI](https://www.weatherapi.com/):
+
+```dotenv
+VITE_WEATHER_API_KEY=your_weatherapi_key
+```
+
+```bash
+npm run dev
+```
+
+Начальный город — Астана. После изменения переменных окружения перезапустите сервер. Геолокация работает через HTTPS или на localhost. Координаты запрашиваются только по нажатию кнопки и отправляются в WeatherAPI для определения погоды; приложение не сохраняет их в localStorage.
+
+`VITE_`-переменные включаются в браузерную сборку. Используйте отдельный WeatherAPI-ключ с подходящими ограничениями и квотой. Не коммитьте `.env` и `.env.local`.
+
+## Проверка
+
+```bash
+npm test
 npm run lint
 npm run build
 npm run preview
 ```
 
-Готовая сборка находится в `dist`. Перед сборкой на Vercel задайте `VITE_WEATHER_API_KEY` в настройках окружения проекта, затем запустите новый деплой.
+Тесты на встроенном `node:test` покрывают кодирование запросов, ошибки и отмену, проверку ответов, единицы, погодные группы и часовые пояса. GitHub Actions запускает тесты, lint и сборку при push и в pull request. Для сборки в CI ключ не требуется; работающий сайт требует настроенного ключа.
 
-### Использование
+Старые запросы отменяются при новом поиске. Запрос ограничен 15 секундами, определение местоположения — 10 секундами. При неудаче сохраняется предыдущая погода и показывается причина с возможностью повтора. При первоначальной ошибке приложение показывает экран восстановления.
 
-- При открытии приложение загружает погоду в Астане.
-- Введите название города и нажмите Enter или кнопку поиска.
-- Кнопка с меткой местоположения запрашивает разрешение браузера на геолокацию. Для неё нужен HTTPS или `localhost`.
+## Структура
 
----
+```text
+src/components/   интерфейс, погодные инструменты и живой фон
+src/hooks/        загрузка, геолокация, настройки и реакция фона
+src/lib/          форматы, погодные группы и описания сцен
+src/services/     WeatherAPI current.json и проверка ответов
+tests/            проверки данных и ошибок без сетевых запросов
+public/scenes/    локальные изображения и их источники
+```
+
+Стек: React 19, Vite 8, обычный CSS, Lucide React и локально установленный вариативный Manrope с кириллицей (OFL-1.1). Дополнительных анимационных или UI-фреймворков нет. Декоративные эффекты ограничены по количеству; слоёв сцены не больше двух, видимых реакций на клики — не больше шести.
+
+## Деплой на Vercel
+
+Существующий проект `weather-app` собирает `main` из этого репозитория:
+
+- Framework: Vite; Build Command: `npm run build`; Output Directory: `dist`.
+- Node.js: 24.
+- `VITE_WEATHER_API_KEY` должна быть задана в окружении Production, а для тестовых деплоев — в Preview.
+- После изменения ключа нужен новый деплой.
+- `vercel.json` задаёт кеширование пейзажей и неизменяемых ресурсов сборки.
+
+Изображения размещены локально, без запросов к Unsplash во время использования. Источники и лицензия — в [public/scenes/README.md](public/scenes/README.md). Шрифт также загружается с того же сайта.
 
 ## English quick start
 
-A React weather dashboard with city search, browser geolocation, and themes that follow the weather and time of day.
+A Russian-language weather app with city search, browser geolocation, Celsius/Fahrenheit, and interactive landscapes. Scene previews change presentation only; the measurements always come from WeatherAPI.
 
-### Requirements
+Use Node.js 22.12+ (24 on Vercel), run `npm ci`, copy `.env.example` to `.env.local`, and set `VITE_WEATHER_API_KEY`. Then run `npm run dev`. Check with `npm test`, `npm run lint`, and `npm run build`. Production output is `dist`.
 
-- Node.js 22.12 or newer and npm
-- A [WeatherAPI](https://www.weatherapi.com/) key
-
-### Run locally
-
-1. Clone the repository and install the locked dependencies:
-   ```bash
-   git clone https://github.com/bossmerej-ship-it/weather-app.git
-   cd weather-app
-   npm ci
-   ```
-
-2. Copy `.env.example` to `.env` in the project root and set your key:
-   ```dotenv
-   VITE_WEATHER_API_KEY=your_weatherapi_key
-   ```
-   Restart the development server after changing `.env`. Variables prefixed with `VITE_` are included in the browser bundle, so use a dedicated key with appropriate restrictions and a quota.
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-   Open the local URL printed by Vite. The dashboard initially shows the weather in Astana. Search for another city or use the location button; geolocation requires HTTPS or `localhost`.
-
-### Check and build
-
-```bash
-npm run lint
-npm run build
-npm run preview
-```
-
-The production build is written to `dist`. For Vercel, set `VITE_WEATHER_API_KEY` in the project's environment settings before deploying.
-
+The default city is Astana. Geolocation needs HTTPS or localhost and is requested only after pressing the location button. Animation can be paused and respects reduced-motion settings. Landscape images are atmospheric illustrations, not location photographs. No audio, sample weather, or invented forecast is included.
