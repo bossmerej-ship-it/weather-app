@@ -43,7 +43,7 @@ export function Header({ onSearch, onGeolocation, loading, locating, unit, setUn
           {formError && <p className="search-error" id="search-error" role="alert">{formError}</p>}
         </div>
         <div className="header-actions">
-          <button className="location-button" type="button" onClick={onGeolocation} disabled={locating} aria-label="Моё местоположение" title="Моё местоположение">
+          <button className="location-button" type="button" onClick={() => { setFormError(''); onGeolocation(); }} disabled={locating} aria-label="Моё местоположение" title="Моё местоположение">
             {locating ? <LoaderCircle size={17} className="spin" aria-hidden="true" /> : <LocateFixed size={17} aria-hidden="true" />}
             <span>Где я</span>
           </button>
@@ -54,7 +54,7 @@ export function Header({ onSearch, onGeolocation, loading, locating, unit, setUn
       </header>
       <nav className="quick-cities" aria-label="Быстрый выбор города">
         <span className="quick-label">Заглянуть в</span>
-        {QUICK_CITIES.map(({ query: cityQuery, label }) => <button type="button" key={cityQuery} onClick={() => { setQuery(''); onSearch(cityQuery); }} aria-current={activeCity === cityQuery ? 'location' : undefined}>{label}<ArrowUpRight size={12} aria-hidden="true" /></button>)}
+        {QUICK_CITIES.map(({ query: cityQuery, label }) => <button type="button" key={cityQuery} onClick={() => { setQuery(''); setFormError(''); onSearch(cityQuery); }} aria-current={activeCity === cityQuery ? 'location' : undefined}>{label}<ArrowUpRight size={12} aria-hidden="true" /></button>)}
       </nav>
     </>
   );
