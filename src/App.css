@@ -113,6 +113,11 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes content-arrive { from { opacity: 0; transform: translateY(10px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 @keyframes shimmer { to { background-position: -200% 0; } }
+.app-motion-paused .hero-copy, .app-motion-paused .skeleton-line { animation: none; }
+.app-motion-paused .scene-choices button:hover { transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0s !important; animation: none !important; }
+}
 @media (min-width: 1600px) { .app-content { padding-top: 18px; } .weather-hero { min-height: 425px; padding-top: 60px; } .site-footer { margin-top: 40px; } }
 
 @media (max-width: 1100px) {

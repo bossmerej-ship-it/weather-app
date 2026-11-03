@@ -12,26 +12,36 @@ export function useWeather() {
     const id = ++requestId.current;
     controller.current?.abort();
     controller.current = new AbortController();
+    const activeController = controller.current;
+    let timedOut = false;
+    const timeout = setTimeout(() => { timedOut = true; activeController.abort(); }, 15000);
     lastQuery.current = query;
     setState((previous) => ({ ...previous, loading: true, error: null }));
     try {
       const weather = await requestWeather(query, {
         apiKey: import.meta.env.VITE_WEATHER_API_KEY,
-        signal: controller.current.signal,
+        signal: activeController.signal,
       });
       if (id !== requestId.current) return null;
       setState({ weather, loading: false, error: null });
       return weather;
     } catch (error) {
-      if (id !== requestId.current || error.name === 'AbortError') return null;
-      setState((previous) => ({ ...previous, loading: false, error: { code: error.code || 'unavailable', message: error.message } }));
+      if (id !== requestId.current || (error.name === 'AbortError' && !timedOut)) return null;
+      setState((previous) => ({ ...previous, loading: false, error: {
+        code: timedOut ? 'timeout' : error.code || 'unavailable',
+        message: timedOut ? 'Погода загружается дольше обычного. Проверьте подключение и попробуйте ещё раз.' : error.message,
+      } }));
       return null;
+    } finally {
+      clearTimeout(timeout);
     }
   }, []);
 
   useEffect(() => {
-    load('Astana');
+    let disposed = false;
+    queueMicrotask(() => { if (!disposed) load('Astana'); });
     return () => {
+      disposed = true;
       requestId.current += 1;
       controller.current?.abort();
     };
