@@ -1,36 +1,14 @@
-import { Droplets, Gauge, Navigation, Thermometer, Wind } from 'lucide-react';
-import { pressureInMm, temperature, windDirection } from '../lib/weather';
+import { Droplets, Gauge, Navigation, Wind } from 'lucide-react';
+import { pressureInMm, windDirection } from '../lib/weather';
 
-export function WeatherMetrics({ current, unit }) {
-  const wind = Math.round(current.wind_kph / 3.6);
-  const difference = Math.round(current.feelslike_c - current.temp_c);
-  const feelsDescription = Math.abs(difference) < 1 ? 'Как на термометре' : difference < 0 ? 'Прохладнее, чем кажется' : 'Теплее, чем кажется';
-  return (
-    <section className="instruments" aria-label="Подробности погоды">
-      <article className="metric metric-feels">
-        <div className="metric-label"><Thermometer size={16} aria-hidden="true" /><h2>Ощущается</h2></div>
-        <p className="metric-value">{temperature(current.feelslike_c, unit)}<span>°{unit.toUpperCase()}</span></p>
-        <p className="metric-description">{feelsDescription}</p>
-        <div className="thermometer-track" aria-hidden="true"><span style={{ width: `${Math.max(8, Math.min(92, (current.feelslike_c + 30) / 75 * 100))}%` }} /></div>
-      </article>
-      <article className="metric metric-humidity">
-        <div className="metric-label"><Droplets size={16} aria-hidden="true" /><h2>Влажность</h2></div>
-        <p className="metric-value">{current.humidity}<span>%</span></p>
-        <p className="metric-description">Относительная влажность</p>
-        <div className="humidity-dots" aria-hidden="true">{Array.from({ length: 20 }, (_, i) => <i key={i} className={i < current.humidity / 5 ? 'filled' : ''} />)}</div>
-      </article>
-      <article className="metric metric-wind">
-        <div className="metric-label"><Wind size={16} aria-hidden="true" /><h2>Ветер</h2></div>
-        <p className="metric-value">{wind}<span>м/с</span></p>
-        <p className="metric-description">{wind === 0 ? 'Штиль' : <>Скорость ветра <span className="wind-direction"><Navigation size={11} style={{ transform: `rotate(${current.wind_degree || 0}deg)` }} aria-hidden="true" />{windDirection(current.wind_degree)}</span></>}</p>
-        <div className="wind-lines" aria-hidden="true"><span /><span /><span /></div>
-      </article>
-      <article className="metric metric-pressure">
-        <div className="metric-label"><Gauge size={16} aria-hidden="true" /><h2>Давление</h2></div>
-        <p className="metric-value">{pressureInMm(current.pressure_mb)}<span>мм</span></p>
-        <p className="metric-description">Миллиметров ртутного столба</p>
-        <div className="pressure-scale" aria-hidden="true">{Array.from({ length: 24 }, (_, i) => <i key={i} />)}<span style={{ left: `${Math.max(3, Math.min(97, (current.pressure_mb - 960) / 100 * 100))}%` }} /></div>
-      </article>
-    </section>
-  );
+export function WeatherMetrics({ current }) {
+  const from = {С:'севера',СВ:'северо-востока',В:'востока',ЮВ:'юго-востока',Ю:'юга',ЮЗ:'юго-запада',З:'запада',СЗ:'северо-запада'};
+  const degrees = Number.isFinite(current.wind_degree) ? current.wind_degree : null;
+  return <section className="weather-details" aria-labelledby="details-title">
+    <div className="section-heading"><h2 id="details-title">Подробности</h2><span>Сейчас</span></div>
+    <div className="wind-instrument"><div className="wind-copy"><span className="instrument-label"><Wind size={17} />Ветер</span><p className="wind-value">{Math.round(current.wind_kph / 3.6)} <span>м/с</span></p><p>{degrees !== null ? `С ${from[windDirection(degrees)]} · ${Math.round(degrees)}°` : 'Направление недоступно'}</p>{Number.isFinite(current.gust_kph) && <small>Порывы до {Math.round(current.gust_kph / 3.6)} м/с</small>}</div>
+      {degrees !== null && <div className="wind-compass" aria-label={`Ветер с ${from[windDirection(degrees)]}, ${degrees} градусов`}><span className="north">С</span><span className="east">В</span><span className="south">Ю</span><span className="west">З</span><Navigation size={32} style={{transform:`rotate(${degrees - 45}deg)`}} aria-hidden="true" /><i /></div>}
+    </div>
+    <div className="detail-pair"><div><span className="instrument-label"><Droplets size={16} />Влажность</span><p>{current.humidity}<span>%</span></p><progress value={current.humidity} max="100" aria-label="Относительная влажность" /><div className="scale-labels"><span>0</span><span>100%</span></div></div><div><span className="instrument-label"><Gauge size={16} />Давление</span><p>{pressureInMm(current.pressure_mb)}<span>мм рт. ст.</span></p><small>{Math.round(current.pressure_mb)} гПа</small></div></div>
+  </section>;
 }

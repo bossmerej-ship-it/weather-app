@@ -5,11 +5,11 @@ import { WeatherIcon } from './WeatherIcon';
 export function AtmosphereControls({ selected, setSelected, paused, setPaused, reducedMotion }) {
   return (
     <section className="atmosphere" aria-labelledby="atmosphere-title">
-      <div className="atmosphere-heading"><div><h2 id="atmosphere-title">Своя атмосфера</h2><p>Выберите настроение пейзажа</p></div>
+      <div className="atmosphere-heading"><div><h2 id="atmosphere-title">Атмосфера фона</h2><p>Оформление окна с пейзажем</p></div>
         <button className="motion-toggle" type="button" onClick={() => setPaused(!paused)} disabled={reducedMotion}
           aria-label={reducedMotion ? 'Анимации отключены в настройках устройства' : paused ? 'Включить анимации' : 'Приостановить анимации'}
           title={reducedMotion ? 'Анимации отключены в настройках устройства' : paused ? 'Включить анимации' : 'Приостановить анимации'}>
-          {paused || reducedMotion ? <Play size={13} aria-hidden="true" /> : <Pause size={13} aria-hidden="true" />}<span>Анимация</span>
+          {paused || reducedMotion ? <Play size={13} aria-hidden="true" /> : <Pause size={13} aria-hidden="true" />}<span>{reducedMotion ? 'Без движения' : paused ? 'Включить движение' : 'Остановить движение'}</span>
         </button>
       </div>
       <div className="scene-choices" role="group" aria-label="Атмосфера фона">
@@ -18,8 +18,8 @@ export function AtmosphereControls({ selected, setSelected, paused, setPaused, r
         </button>)}
       </div>
       <div className="atmosphere-footnote">
-        <p>{selected === 'auto' ? 'Пейзаж меняется вместе с погодой.' : 'Меняется только фон. Показатели погоды остаются реальными.'}</p>
-        <span id="scene-hint"><MousePointer2 size={12} aria-hidden="true" />Нажмите на пейзаж — он откликнется</span>
+        <p>{selected === 'auto' ? 'Авто: фон следует погоде.' : 'Выбранный фон не меняет прогноз.'}</p>
+        <span id="scene-hint"><MousePointer2 size={12} aria-hidden="true" />Пейзаж реагирует на курсор и касания</span>
       </div>
     </section>
   );
