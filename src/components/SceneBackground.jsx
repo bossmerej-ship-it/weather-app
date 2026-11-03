@@ -3,10 +3,11 @@ import { SCENE_IMAGES } from '../lib/scenes';
 import { useAtmosphereInteraction } from '../hooks/useAtmosphereInteraction';
 import './SceneBackground.css';
 
-export function SceneBackground({ scene, motion }) {
+export function SceneBackground({ scene, motion, intensity = .45 }) {
   const [layers, setLayers] = useState([{ scene, id: 0 }]);
   const serial = useRef(0);
   const { backgroundRef, reactions, react } = useAtmosphereInteraction(motion);
+  const strength = Number.isFinite(intensity) ? Math.max(0, Math.min(1, intensity)) : .45;
 
   useEffect(() => {
     const id = ++serial.current;
@@ -23,9 +24,22 @@ export function SceneBackground({ scene, motion }) {
     return () => { disposed = true; image.onload = null; image.onerror = null; };
   }, [scene]);
 
+  useEffect(() => {
+    if (layers.length < 2) return;
+    const latest = layers.at(-1).id;
+    const timer = setTimeout(() => {
+      setLayers((previous) => previous.at(-1).id === latest ? previous.slice(-1) : previous);
+    }, motion ? 1500 : 0);
+    return () => clearTimeout(timer);
+  }, [layers, motion]);
+
   return (
     <>
-    <div ref={backgroundRef} className={`scene-background ${motion ? '' : 'motion-paused'}`} aria-hidden="true">
+    <div ref={backgroundRef} className={`scene-background ${motion ? '' : 'motion-paused'}`} aria-hidden="true" style={{
+      '--precip-opacity': .08 + strength * .42,
+      '--rain-speed': `${1.3 - strength * .55}s`,
+      '--snow-speed': `${24 - strength * 9}s`,
+    }}>
       {layers.map((layer) => (
         <div className={`scene-layer scene-${layer.scene}`} key={layer.id}>
           <div className="scene-landscape" style={{ backgroundImage: `url("${SCENE_IMAGES[layer.scene]}")` }} />

@@ -12,10 +12,15 @@ test('weather groups cover freezing rain, sleet, thunderstorms and fog', () => {
   assert.equal(getWeatherKind(-1), 'clouds');
 });
 
-test('automatic night atmosphere preserves the original day/night behavior', () => {
+test('automatic night atmosphere keeps precipitation and fog visible', () => {
   assert.equal(getWeatherScene(1000, 0), 'night');
-  assert.equal(getWeatherScene(1183, 0), 'night');
+  assert.equal(getWeatherScene(1006, 0), 'night');
+  assert.equal(getWeatherScene(1183, 0), 'rain');
+  assert.equal(getWeatherScene(1213, 0), 'snow');
+  assert.equal(getWeatherScene(1273, 0), 'storm');
+  assert.equal(getWeatherScene(1147, 0), 'fog');
   assert.equal(getWeatherScene(1183, 1), 'rain');
+  assert.equal(getWeatherScene(1000, 1), 'clear');
 });
 
 test('temperature units preserve freezing, negative and zero values', () => {

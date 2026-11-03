@@ -13,7 +13,8 @@ export function getWeatherKind(code) {
 }
 
 export function getWeatherScene(code, isDay) {
-  return isDay === 0 ? 'night' : getWeatherKind(code);
+  const kind = getWeatherKind(code);
+  return isDay === 0 && (kind === 'clear' || kind === 'clouds') ? 'night' : kind;
 }
 
 export function temperature(value, unit = 'c') {
