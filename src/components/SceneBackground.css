@@ -48,3 +48,17 @@
 @keyframes starlight { from { opacity: .2; } to { opacity: .8; } }
 @keyframes storm-glow { 0%, 95%, 98%, 100% { opacity: 1; } 96%, 99% { opacity: .25; } }
 @media (prefers-reduced-motion: reduce) { .scene-background * { animation: none !important; transition: none !important; } .scene-landscape { transform: scale(1.035); will-change: auto; } }
+.scene-touch { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; border: 0; padding: 0; background: transparent; cursor: crosshair; }
+.scene-touch:focus-visible { outline-offset: -10px; }
+.scene-reactions { position: fixed; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; }
+.scene-reaction { position: absolute; width: 1px; height: 1px; }
+.reaction-glow { position: absolute; width: 240px; height: 240px; margin: -120px; border-radius: 50%; background: radial-gradient(circle, #e4f5ff55, #c1e6ff10 45%, transparent 70%); animation: reaction-glow 1.6s ease-out both; }
+.reaction-ring { position: absolute; width: 24px; height: 24px; margin: -12px; border: 1px solid #ddf4ff88; border-radius: 50%; animation: reaction-ring 1.5s var(--ease-out) both; }
+.scene-reaction i { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #e4f5ff; box-shadow: 0 0 12px #ccedff; animation: reaction-particle 1.4s var(--ease-out) both; }
+.reactions-still .scene-reaction * { animation: none; }
+.reactions-still .reaction-ring, .reactions-still .scene-reaction i { display: none; }
+.reactions-still .reaction-glow { opacity: .7; }
+@keyframes reaction-glow { 0% { opacity: 0; transform: scale(.3); } 20% { opacity: 1; } 100% { opacity: 0; transform: scale(1.4); } }
+@keyframes reaction-ring { from { opacity: .8; transform: scale(.5); } to { opacity: 0; transform: scale(13); } }
+@keyframes reaction-particle { from { opacity: 1; transform: rotate(var(--angle)) translateX(7px) scale(1.2); } to { opacity: 0; transform: rotate(var(--angle)) translateX(var(--distance)) scale(.2); } }
+@media (prefers-reduced-motion: reduce) { .scene-reaction * { animation: none !important; } .reaction-ring, .scene-reaction i { display: none; } }
