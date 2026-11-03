@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { requestWeather } from '../services/weather';
+import { requestDashboardWeather } from '../services/weather';
 
 export function useWeather() {
-  const [state, setState] = useState({ weather: null, loading: true, error: null });
+  const [state, setState] = useState({ weather: null, loading: true, error: null, forecastUnavailable: false });
   const controller = useRef(null);
   const requestId = useRef(0);
   const lastQuery = useRef('Astana');
@@ -18,12 +18,12 @@ export function useWeather() {
     lastQuery.current = query;
     setState((previous) => ({ ...previous, loading: true, error: null }));
     try {
-      const weather = await requestWeather(query, {
+      const { weather, forecastUnavailable } = await requestDashboardWeather(query, {
         apiKey: import.meta.env.VITE_WEATHER_API_KEY,
         signal: activeController.signal,
       });
       if (id !== requestId.current) return null;
-      setState({ weather, loading: false, error: null });
+      setState({ weather, forecastUnavailable, loading: false, error: null });
       return weather;
     } catch (error) {
       if (id !== requestId.current || (error.name === 'AbortError' && !timedOut)) return null;
