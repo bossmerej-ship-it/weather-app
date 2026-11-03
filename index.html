@@ -4,11 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Погода в вашем городе: температура, влажность, ветер и давление. Поиск по названию города и геолокации." />
-    <title>Погода — Weather Dashboard</title>
+    <meta name="theme-color" content="#152c3b" />
+    <meta name="description" content="NEBO — погода в своём ритме. Найдите свой город, узнайте температуру и создайте свою атмосферу: солнечный свет, дождь, снег или звёздная ночь." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content="NEBO — погода в моменте" />
+    <meta property="og:description" content="Точная погода. Живые пейзажи. Своя атмосфера." />
+    <link rel="preconnect" href="https://api.weatherapi.com" />
+    <link rel="preload" as="image" href="/scenes/alpine-lake.jpg" />
+    <title>NEBO — погода в моменте</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript><p style="padding: 2rem; color: #f8fafc; background: #152c3b; font-family: sans-serif">Для поиска погоды и интерактивного пейзажа включите JavaScript в настройках браузера.</p></noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
