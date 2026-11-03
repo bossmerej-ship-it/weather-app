@@ -11,7 +11,10 @@ export function CurrentWeather({ weather, unit }) {
     return () => clearInterval(interval);
   }, []);
   const clock = location.tz_id ? locationClock(location.tz_id, now) : null;
-  const kind = current.is_day === 0 && current.condition.code === 1000 ? 'night' : getWeatherKind(current.condition.code);
+  const kind = getWeatherKind(current.condition.code);
+  const iconKind = [1006, 1009].includes(current.condition.code) ? 'overcast'
+    : current.is_day === 0 && kind === 'clear' ? 'night'
+      : current.is_day === 0 && kind === 'clouds' ? 'night-clouds' : kind;
   const degrees = temperature(current.temp_c, unit);
 
   return (
@@ -24,7 +27,7 @@ export function CurrentWeather({ weather, unit }) {
             {degrees}<span className="degree">°</span><span className="temperature-unit">{unit.toUpperCase()}</span>
           </p>
           <div className="condition-composition">
-            <span className={`condition-symbol condition-${kind}`}><WeatherIcon kind={kind} size={47} /></span>
+            <span className={`condition-symbol condition-${kind}`}><WeatherIcon kind={iconKind} size={47} /></span>
             <p className="current-condition">{current.condition.text}</p>
             <p className="hero-note">Почувствуйте этот момент.</p>
           </div>
