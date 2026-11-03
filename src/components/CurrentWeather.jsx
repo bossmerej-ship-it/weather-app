@@ -12,6 +12,7 @@ export function CurrentWeather({ weather, unit }) {
   }, []);
   const clock = location.tz_id ? locationClock(location.tz_id, now) : null;
   const kind = current.is_day === 0 && current.condition.code === 1000 ? 'night' : getWeatherKind(current.condition.code);
+  const degrees = temperature(current.temp_c, unit);
 
   return (
     <section className="weather-hero" aria-labelledby="city-title">
@@ -19,8 +20,8 @@ export function CurrentWeather({ weather, unit }) {
         <div className="place-eyebrow"><MapPin size={13} aria-hidden="true" /><span>{countryName(location.country)}</span><span className="eyebrow-line" /><span>Сейчас</span></div>
         <h1 id="city-title">{cityName(location.name)}</h1>
         <div className="temperature-composition">
-          <p className="current-temperature" aria-label={`${temperature(current.temp_c, unit)} градусов ${unit === 'c' ? 'Цельсия' : 'Фаренгейта'}`}>
-            {temperature(current.temp_c, unit)}<span className="degree">°</span><span className="temperature-unit">{unit.toUpperCase()}</span>
+          <p className={`current-temperature ${String(degrees).length > 2 ? 'temperature-compact' : ''}`} aria-label={`${degrees} градусов ${unit === 'c' ? 'Цельсия' : 'Фаренгейта'}`}>
+            {degrees}<span className="degree">°</span><span className="temperature-unit">{unit.toUpperCase()}</span>
           </p>
           <div className="condition-composition">
             <span className={`condition-symbol condition-${kind}`}><WeatherIcon kind={kind} size={47} /></span>

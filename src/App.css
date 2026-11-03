@@ -35,7 +35,8 @@
 .current-temperature { position: relative; font-weight: 300; line-height: 1.05; font-size: clamp(108px, 11.3vw, 160px); letter-spacing: -.09em; font-variant-numeric: tabular-nums; }
 .degree { display: inline-block; font-size: .6em; vertical-align: top; line-height: 1.25; margin-left: 4px; font-weight: 350; }
 .temperature-unit { font-size: 18px; letter-spacing: 0; color: #e3edf1; margin-left: 6px; vertical-align: .25em; font-weight: 400; }
-.condition-composition { padding-top: 20px; max-width: 235px; }
+.condition-composition { padding-top: 20px; max-width: 235px; min-width: 0; flex: 1; }
+.current-temperature { white-space: nowrap; flex-shrink: 0; }
 .condition-symbol { display: block; margin-bottom: 6px; color: var(--accent); }
 .condition-clouds, .condition-fog, .condition-rain, .condition-snow { color: #d8ebf8; }
 .current-condition { font-size: 16px; font-weight: 500; line-height: 1.5; }
@@ -169,9 +170,10 @@
   .quick-cities button { white-space: nowrap; padding-block: 8px; }
   .weather-hero { min-height: 320px; padding: 35px 0 40px; }
   .hero-copy { max-width: 100%; }
-  .place-eyebrow { font-size: 11px; }
+  .place-eyebrow { font-size: 11px; max-width: calc(100% - 48px); flex-wrap: wrap; }
   #city-title { font-size: clamp(36px, 9vw, 58px); margin-top: 14px; }
   .current-temperature { font-size: clamp(108px, 23vw, 144px); }
+  .current-temperature.temperature-compact { font-size: 88px; }
   .temperature-composition { gap: 24px; margin-top: 11px; }
   .condition-composition { padding-top: 15px; max-width: 180px; }
   .condition-symbol svg { width: 36px; height: 36px; }
@@ -222,6 +224,7 @@
   .quick-cities { gap: 16px; }
   .temperature-composition { gap: 14px; }
   .current-temperature { font-size: 108px; }
+  .current-temperature.temperature-compact { font-size: 75px; }
   .temperature-unit { font-size: 14px; margin-left: 3px; }
   .condition-composition { max-width: 125px; }
   .current-condition { font-size: 12px; }
