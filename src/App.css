@@ -130,11 +130,22 @@
 .retry-button, .forecast-unavailable button { display: flex; align-items: center; gap: 7px; border: 1px solid #f6ddb666; border-radius: 8px; padding: 10px; min-height: 44px; background: transparent; }
 .forecast-unavailable { margin-bottom: 24px; }
 .spin { animation: spin 1s linear infinite; }
-.reveal { min-width: 0; transition: opacity .55s ease, transform .55s var(--ease-out); }
-.reveal-pending { opacity: 0; transform: translateY(15px); }
+.hero-header { animation: ui-fade .55s ease-out both; }
+.current-kicker, .current-weather h1 { animation: ui-rise .45s var(--ease-out) both; }
+.current-reading { animation: ui-rise .48s .03s var(--ease-out) both; }
+.current-condition { animation: ui-rise .45s .08s var(--ease-out) both; }
+.current-feels { animation: ui-rise .45s .12s var(--ease-out) both; }
+.forecast-cue { animation: ui-fade .6s .2s ease-out both; }
+.reveal { min-width: 0; transition: opacity .42s ease, transform .42s var(--ease-out); }
+.reveal-pending { opacity: 0; transform: translateY(10px); }
+.details-layout > .reveal:nth-child(2) { transition-delay: .06s; }
 .reveal:focus-within { opacity: 1; transform: none; }
 .app-motion-paused .forecast-cue svg, .app-motion-paused .spin { animation: none; }
+.app-motion-paused .hero-header, .app-motion-paused .current-kicker, .app-motion-paused .current-weather h1,
+.app-motion-paused .current-data > *, .app-motion-paused .forecast-cue, .app-motion-paused .city-dialog[open], .app-motion-paused .city-dialog::backdrop { animation: none; }
 .app-motion-paused .reveal { transition: none; }
+@keyframes ui-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ui-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes cue-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 @media (max-width: 900px) {

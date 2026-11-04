@@ -15,6 +15,10 @@
   backdrop-filter: blur(24px);
 }
 .city-dialog::backdrop { background: #09283b66; backdrop-filter: blur(8px); }
+.city-dialog[open] { animation: dialog-enter .22s ease-out both; }
+.city-dialog[open]::backdrop { animation: dialog-backdrop .2s ease-out both; }
+@keyframes dialog-enter { from { opacity: 0; transform: translateY(6px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes dialog-backdrop { from { opacity: 0; } to { opacity: 1; } }
 .city-dialog-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .city-dialog-heading h2 { margin: 0; font-size: 25px; font-weight: 650; letter-spacing: -.035em; line-height: 1.25; }
 .city-dialog-heading p { max-width: 350px; margin: 10px 0 0; color: #4b6375; font-size: 14px; line-height: 1.7; }
@@ -54,4 +58,4 @@
   .city-dialog-quick { gap: 8px; }
   .city-dialog-quick button { padding-left: 12px; padding-right: 12px; }
 }
-@media(prefers-reduced-motion: reduce) { .city-dialog * { transition: none!important; animation: none!important; } }
+@media(prefers-reduced-motion: reduce) { .city-dialog, .city-dialog::backdrop, .city-dialog * { transition: none!important; animation: none!important; } }

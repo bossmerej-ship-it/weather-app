@@ -15,11 +15,13 @@ export function CurrentWeather({ weather, unit, onChooseCity, loading }) {
     <h1 id="city-title"><button className="city-trigger" type="button" onClick={onChooseCity} aria-haspopup="dialog" aria-label={cityName(location.name) + ' — выбрать город'}>
       {cityName(location.name)}<ChevronDown size={23} aria-hidden="true" />
     </button></h1>
+    <div className="current-data" key={location.name + ':' + location.lat + ':' + location.lon}>
     <div className="current-reading">
       <p className="current-temperature" aria-label={'Температура ' + temperature(current.temp_c, unit) + ' по шкале ' + (unit === 'c' ? 'Цельсия' : 'Фаренгейта')}>{temperature(current.temp_c, unit)}<span>°{unit.toUpperCase()}</span></p>
       <WeatherIcon kind={icon} size={39} />
     </div>
     <p className="current-condition">{current.condition.text}</p>
     <p className="current-feels">Ощущается как {temperature(current.feelslike_c, unit)}°</p>
+    </div>
   </section>;
 }
