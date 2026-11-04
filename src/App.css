@@ -12,12 +12,12 @@
 .motion-toggle:hover { background: #345b7fb3; }
 .motion-toggle-compact { width: 44px; padding: 0; border-radius: 50%; pointer-events: auto; }
 .hero-weather { position: absolute; left: clamp(24px, 7vw, 112px); bottom: clamp(110px, 16vh, 165px); width: min(500px, calc(100% - 48px)); pointer-events: auto; text-shadow: 0 2px 25px #0c2b4c70; }
-.current-weather { transition: opacity .35s; }
+.current-weather { transition: opacity .22s ease-out; }
 .current-updating { opacity: .65; }
 .current-kicker { color: #e7f3fc; font-size: 13px; margin-bottom: 6px; letter-spacing: .015em; }
 .city-trigger { display: flex; align-items: center; gap: 12px; padding: 6px 2px 8px 0; max-width: 100%; text-align: left; border: 0; background: none; color: #fff; font-size: clamp(28px, 3vw, 42px); line-height: 1.2; font-weight: 600; letter-spacing: -.04em; overflow-wrap: anywhere; }
 .city-trigger svg { opacity: .75; transition: transform .2s; }
-.city-trigger:hover svg { transform: translateY(3px); opacity: 1; }
+.city-trigger:hover svg { transform: translateY(2px); opacity: 1; }
 .current-reading { display: flex; align-items: center; gap: 22px; margin: 8px 0 9px; }
 .current-reading > svg { opacity: .95; }
 .current-temperature { font-size: clamp(66px, 6.4vw, 88px); line-height: 1.12; letter-spacing: -.065em; font-weight: 400; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -25,7 +25,8 @@
 .current-condition { font-size: clamp(17px, 1.6vw, 21px); font-weight: 500; line-height: 1.5; max-width: 440px; }
 .current-feels { font-size: 14px; color: #e2edf8; margin-top: 6px; }
 .forecast-cue { position: absolute; left: 50%; bottom: 34px; display: flex; flex-direction: column; align-items: center; gap: 12px; transform: translateX(-50%); color: #f3f9ff; font-size: 12px; letter-spacing: .035em; white-space: nowrap; pointer-events: auto; padding: 10px 20px; text-shadow: 0 1px 10px #14335080; }
-.forecast-cue svg { animation: cue-float 3.5s ease-in-out infinite; }
+.forecast-cue svg { transition: transform .16s ease-out; }
+.forecast-cue:hover svg { transform: translateY(2px); }
 .hero-loading { margin-top: 13px; font-size: 13px; }
 .hero-empty { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
 .empty-city-button { display: flex; gap: 10px; align-items: center; background: none; border: 0; padding: 10px 0; font-size: 26px; }
@@ -130,24 +131,24 @@
 .retry-button, .forecast-unavailable button { display: flex; align-items: center; gap: 7px; border: 1px solid #f6ddb666; border-radius: 8px; padding: 10px; min-height: 44px; background: transparent; }
 .forecast-unavailable { margin-bottom: 24px; }
 .spin { animation: spin 1s linear infinite; }
-.hero-header { animation: ui-fade .55s ease-out both; }
-.current-kicker, .current-weather h1 { animation: ui-rise .45s var(--ease-out) both; }
-.current-reading { animation: ui-rise .48s .03s var(--ease-out) both; }
-.current-condition { animation: ui-rise .45s .08s var(--ease-out) both; }
-.current-feels { animation: ui-rise .45s .12s var(--ease-out) both; }
-.forecast-cue { animation: ui-fade .6s .2s ease-out both; }
-.reveal { min-width: 0; transition: opacity .42s ease, transform .42s var(--ease-out); }
-.reveal-pending { opacity: 0; transform: translateY(10px); }
-.details-layout > .reveal:nth-child(2) { transition-delay: .06s; }
+.hero-header { animation: ui-fade .3s ease-out both; }
+.current-weather { animation: ui-rise .32s ease-out backwards; }
+.current-data { animation: ui-fade .25s ease-out both; }
+.forecast-cue { animation: ui-fade .3s ease-out both; }
+.reveal { min-width: 0; transition: opacity .3s ease-out, transform .3s ease-out; }
+.reveal-pending { opacity: 0; transform: translateY(4px); }
 .reveal:focus-within { opacity: 1; transform: none; }
 .app-motion-paused .forecast-cue svg, .app-motion-paused .spin { animation: none; }
-.app-motion-paused .hero-header, .app-motion-paused .current-kicker, .app-motion-paused .current-weather h1,
-.app-motion-paused .current-data > *, .app-motion-paused .forecast-cue, .app-motion-paused .city-dialog[open], .app-motion-paused .city-dialog::backdrop { animation: none; }
-.app-motion-paused .reveal { transition: none; }
+.app-motion-paused .hero-header, .app-motion-paused .current-weather, .app-motion-paused .current-data,
+.app-motion-paused .forecast-cue, .app-motion-paused .city-dialog[open], .app-motion-paused .city-dialog::backdrop { animation: none; }
+.app-motion-paused .reveal, .app-motion-paused .current-weather { transition: none; }
+.app-motion-paused .forecast-cue:hover svg, .app-motion-paused .city-trigger:hover svg { transform: none; }
+.motion-toggle, .unit-switch button, .scene-choices button { transition: background .16s ease-out, border-color .16s ease-out, box-shadow .16s ease-out; }
+.motion-toggle:active:not(:disabled), .scene-choices button:active { box-shadow: inset 0 1px 4px #0d2b494d; }
+.unit-switch button:active { box-shadow: inset 0 1px 4px #0d2b4938; }
 @keyframes ui-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes ui-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ui-rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes cue-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 @media (max-width: 900px) {
   .forecast-container { width: calc(100% - 56px); }.hero-header { inset: 25px 28px auto; }.hero-weather { left: 40px; }
   .daily-legend, .daily-row { grid-template-columns: 90px minmax(95px,1fr) 35px minmax(45px,1fr) 35px 72px; gap: 15px; }
