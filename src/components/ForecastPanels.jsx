@@ -1,5 +1,5 @@
 import { Droplets, Snowflake, ArrowRight } from 'lucide-react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
 const HourlyChart = lazy(() => import('./HourlyChart'));
 import { dailyData, forecastDayLabel, formatForecastTime, precipitationChance, precipitationType, upcomingHours } from '../lib/forecast';
 import { getWeatherKind, temperature } from '../lib/weather';
@@ -14,15 +14,17 @@ function iconKind(record) {
 }
 
 export function HourlyForecast({ weather, unit, motion }) {
+  const [tooltipPortal, setTooltipPortal] = useState(null);
   const hours = upcomingHours(weather, 8);
   if (!hours.length) return null;
   const points = hours.map(hour => ({ ...hour, timeLabel: formatForecastTime(hour), degrees: temperature(hour.temp_c, unit) }));
   return <section className="hourly-panel" aria-labelledby="hourly-title">
     <div className="section-heading"><h2 id="hourly-title">Ближайшие часы</h2><span>Температура, °{unit.toUpperCase()}</span></div>
+    <div className="hourly-tooltip-anchor" ref={setTooltipPortal} />
     <div className="hourly-scroll" tabIndex={0} role="region" aria-label="Почасовой прогноз, прокручивается по горизонтали">
       <div className="hourly-content">
         <div className="hourly-times">{points.map((hour) => <div key={hour.time_epoch}><span>{hour.time.slice(0,13) === weather.location.localtime.slice(0,13) ? 'Этот час' : hour.timeLabel}</span><WeatherIcon kind={iconKind(hour)} size={26} /></div>)}</div>
-        <div className="temperature-chart"><Suspense fallback={<span className="sr-only">Температура по часам</span>}><HourlyChart points={points} unit={unit} motion={motion} /></Suspense></div>
+        <div className="temperature-chart"><Suspense fallback={<span className="sr-only">Температура по часам</span>}><HourlyChart points={points} unit={unit} motion={motion} tooltipPortal={tooltipPortal} /></Suspense></div>
         <div className="hourly-rain">{points.map(hour => { const chance=precipitationChance(hour); const snow=precipitationType(hour)==='snow'; return <div key={hour.time_epoch} title={chance===null?'Вероятность недоступна':`${snow?'Снег':'Дождь'}: ${chance}%`}>{snow?<Snowflake size={13} aria-hidden="true" />:<Droplets size={13} aria-hidden="true" />}<span>{chance===null?'—':`${chance}%`}</span></div>; })}</div>
       </div>
     </div>
