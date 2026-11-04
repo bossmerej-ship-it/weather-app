@@ -1,13 +1,47 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+const MAX_REACTIONS = 6;
+const MAX_TRAILS = 12;
+
+function overControl(target) {
+  const control = target?.closest?.('button, a, input, select, textarea, dialog, [data-sky-control]');
+  return control && !control.classList.contains('scene-touch');
+}
+
 export function useAtmosphereInteraction(motion) {
   const backgroundRef = useRef(null);
-  const timers = useRef(new Map());
+  const surfaceRef = useRef(null);
+  const reactionTimers = useRef(new Map());
+  const trailTimers = useRef(new Map());
   const serial = useRef(0);
+  const gesture = useRef(null);
+  const suppressClick = useRef(false);
+  const lastTrail = useRef({ time: 0, x: 0, y: 0 });
   const [reactions, setReactions] = useState([]);
+  const [trails, setTrails] = useState([]);
+
+  const pointerDown = useCallback((event) => {
+    suppressClick.current = false;
+    gesture.current = { id: event.pointerId, type: event.pointerType, x: event.clientX, y: event.clientY, moved: false };
+  }, []);
+  const pointerMove = useCallback((event) => {
+    const start = gesture.current;
+    if (start && start.id === event.pointerId && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10) start.moved = true;
+  }, []);
+  const pointerUp = useCallback((event) => {
+    const start = gesture.current;
+    if (!start || start.id !== event.pointerId) return;
+    const moved = start.moved || Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10;
+    suppressClick.current = start.type === 'touch' && moved;
+    gesture.current = null;
+  }, []);
+  const pointerCancel = useCallback(() => {
+    suppressClick.current = true;
+    gesture.current = null;
+  }, []);
 
   useEffect(() => {
-    const surface = backgroundRef.current?.parentElement;
+    const surface = surfaceRef.current || backgroundRef.current?.parentElement;
     if (!surface) return;
     const center = () => {
       backgroundRef.current?.style.setProperty('--parallax-x', '0px');
@@ -15,19 +49,45 @@ export function useAtmosphereInteraction(motion) {
     };
     if (!motion) {
       center();
-      return;
+      reactionTimers.current.forEach(clearTimeout);
+      trailTimers.current.forEach(clearTimeout);
+      reactionTimers.current.clear();
+      trailTimers.current.clear();
+      let disposed = false;
+      queueMicrotask(() => {
+        if (disposed) return;
+        setReactions([]);
+        setTrails([]);
+      });
+      return () => { disposed = true; };
     }
     let frame = 0;
     const move = (event) => {
-      if (event.pointerType === 'touch') return;
+      pointerMove(event);
+      if (event.pointerType === 'touch' || overControl(event.target)) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const rect = surface.getBoundingClientRect();
         if (!rect.width || !rect.height) return;
-        const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-        const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-        backgroundRef.current?.style.setProperty('--parallax-x', `${(x - .5) * -14}px`);
-        backgroundRef.current?.style.setProperty('--parallax-y', `${(y - .5) * -10}px`);
+        const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+        const y = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
+        backgroundRef.current?.style.setProperty('--parallax-x', (x / rect.width - .5) * -14 + 'px');
+        backgroundRef.current?.style.setProperty('--parallax-y', (y / rect.height - .5) * -10 + 'px');
+        const now = Date.now();
+        const last = lastTrail.current;
+        if (now - last.time < 80 || Math.hypot(x - last.x, y - last.y) < 20) return;
+        lastTrail.current = { time: now, x, y };
+        const id = ++serial.current;
+        if (trailTimers.current.size >= MAX_TRAILS) {
+          const oldest = trailTimers.current.keys().next().value;
+          clearTimeout(trailTimers.current.get(oldest));
+          trailTimers.current.delete(oldest);
+        }
+        setTrails((previous) => [...previous.slice(-(MAX_TRAILS - 1)), { id, x, y }]);
+        trailTimers.current.set(id, setTimeout(() => {
+          setTrails((previous) => previous.filter((item) => item.id !== id));
+          trailTimers.current.delete(id);
+        }, 900));
       });
     };
     const leave = () => { cancelAnimationFrame(frame); center(); };
@@ -38,30 +98,40 @@ export function useAtmosphereInteraction(motion) {
       surface.removeEventListener('pointerleave', leave);
       cancelAnimationFrame(frame);
     };
-  }, [motion]);
+  }, [motion, pointerMove]);
 
   useEffect(() => {
-    const pending = timers.current;
-    return () => { pending.forEach(clearTimeout); pending.clear(); };
+    const pendingReactions = reactionTimers.current;
+    const pendingTrails = trailTimers.current;
+    return () => {
+      pendingReactions.forEach(clearTimeout);
+      pendingTrails.forEach(clearTimeout);
+      pendingReactions.clear();
+      pendingTrails.clear();
+    };
   }, []);
 
   const react = useCallback((event) => {
+    if (!motion) return;
+    if (event.detail !== 0 && suppressClick.current) {
+      suppressClick.current = false;
+      return;
+    }
     const id = ++serial.current;
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.detail === 0 ? rect.width * .5 : Math.max(0, Math.min(rect.width, event.clientX - rect.left));
     const y = event.detail === 0 ? rect.height * .45 : Math.max(0, Math.min(rect.height, event.clientY - rect.top));
-    if (timers.current.size >= 6) {
-      const oldest = timers.current.keys().next().value;
-      clearTimeout(timers.current.get(oldest));
-      timers.current.delete(oldest);
+    if (reactionTimers.current.size >= MAX_REACTIONS) {
+      const oldest = reactionTimers.current.keys().next().value;
+      clearTimeout(reactionTimers.current.get(oldest));
+      reactionTimers.current.delete(oldest);
     }
-    setReactions((previous) => [...previous.slice(-5), { id, x, y }]);
-    const timer = setTimeout(() => {
+    setReactions((previous) => [...previous.slice(-(MAX_REACTIONS - 1)), { id, x, y }]);
+    reactionTimers.current.set(id, setTimeout(() => {
       setReactions((previous) => previous.filter((item) => item.id !== id));
-      timers.current.delete(id);
-    }, motion ? 1600 : 450);
-    timers.current.set(id, timer);
+      reactionTimers.current.delete(id);
+    }, 1500));
   }, [motion]);
 
-  return { backgroundRef, reactions, react };
+  return { backgroundRef, surfaceRef, reactions: motion ? reactions : [], trails: motion ? trails : [], react, pointerDown, pointerMove, pointerUp, pointerCancel };
 }
