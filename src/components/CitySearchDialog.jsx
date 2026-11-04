@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowUpRight, LocateFixed, LoaderCircle, Search, X } from 'lucide-react';
 import './CitySearchDialog.css';
 
@@ -18,18 +18,30 @@ export function CitySearchDialog({ open, onClose, onSearch, onGeolocation, loadi
   const [query, setQuery] = useState('');
   const [formError, setFormError] = useState('');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const surface = dialog.current;
-    if (!surface) return;
-    if (open && !surface.open) surface.showModal();
-    if (!open && surface.open) surface.close();
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
+    if (!surface || !open) return;
+    const opener = document.activeElement;
+    const position = { x: window.scrollX, y: window.scrollY };
     const previousOverflow = document.documentElement.style.overflow;
+    const restoreScroll = () => {
+      if (window.scrollX !== position.x || window.scrollY !== position.y) {
+        window.scrollTo({ left: position.x, top: position.y, behavior: 'instant' });
+      }
+    };
+
     document.documentElement.style.overflow = 'hidden';
-    return () => { document.documentElement.style.overflow = previousOverflow; };
+    setFormError('');
+    if (!surface.open) surface.showModal();
+    input.current?.focus({ preventScroll: true });
+    restoreScroll();
+
+    return () => {
+      if (surface.open) surface.close();
+      document.documentElement.style.overflow = previousOverflow;
+      if (opener?.isConnected && typeof opener.focus === 'function') opener.focus({ preventScroll: true });
+      restoreScroll();
+    };
   }, [open]);
 
   function submit(event) {
@@ -51,7 +63,8 @@ export function CitySearchDialog({ open, onClose, onSearch, onGeolocation, loadi
   }
 
   return <dialog ref={dialog} className="city-dialog" aria-labelledby={titleId} aria-describedby={hintId}
-    onCancel={(event) => { event.preventDefault(); onClose(); }} onClose={onClose} onClick={backdropClick}>
+    onCancel={(event) => { event.preventDefault(); onClose(); }}
+    onClose={() => { if (!dialog.current?.open) onClose(); }} onClick={backdropClick}>
     <div className="city-dialog-heading">
       <div><h2 id={titleId}>Выбрать город</h2><p id={hintId}>Найдите город или используйте своё местоположение.</p></div>
       <button type="button" className="city-dialog-close" onClick={onClose} aria-label="Закрыть поиск"><X size={21} aria-hidden="true" /></button>

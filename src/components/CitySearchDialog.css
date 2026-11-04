@@ -1,5 +1,6 @@
 .city-dialog {
   box-sizing: border-box;
+  color-scheme: light;
   width: min(560px, calc(100% - 40px));
   max-height: calc(100svh - 48px);
   margin: auto;
