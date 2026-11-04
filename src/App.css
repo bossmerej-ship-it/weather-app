@@ -129,7 +129,7 @@
 .retry-button, .forecast-unavailable button { display: flex; align-items: center; gap: 7px; border: 1px solid #f6ddb666; border-radius: 8px; padding: 10px; min-height: 44px; background: transparent; }
 .forecast-unavailable { margin-bottom: 24px; }
 .spin { animation: spin 1s linear infinite; }
-.reveal { transition: opacity .55s ease, transform .55s var(--ease-out); }
+.reveal { min-width: 0; transition: opacity .55s ease, transform .55s var(--ease-out); }
 .reveal-pending { opacity: 0; transform: translateY(15px); }
 .reveal:focus-within { opacity: 1; transform: none; }
 .app-motion-paused .forecast-cue svg, .app-motion-paused .spin { animation: none; }

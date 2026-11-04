@@ -1,7 +1,7 @@
 @import '@fontsource-variable/manrope';
 :root { font-family: 'Manrope Variable', 'Segoe UI', sans-serif; color: #f5faff; background: #326f9f; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; --ease-out: cubic-bezier(.2,.7,.2,1); color-scheme: dark; }
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto; }
 body { margin: 0; min-width: 320px; }
 button, input { font: inherit; }
 button, a, input { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
