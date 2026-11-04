@@ -1,0 +1,56 @@
+.city-dialog {
+  box-sizing: border-box;
+  width: min(560px, calc(100% - 40px));
+  max-height: calc(100svh - 48px);
+  margin: auto;
+  padding: 30px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #ffffffb8;
+  border-radius: 24px;
+  background: #eaf2faee;
+  color: #18364c;
+  box-shadow: 0 28px 100px #09243b40;
+  backdrop-filter: blur(24px);
+}
+.city-dialog::backdrop { background: #09283b66; backdrop-filter: blur(8px); }
+.city-dialog-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.city-dialog-heading h2 { margin: 0; font-size: 25px; font-weight: 650; letter-spacing: -.035em; line-height: 1.25; }
+.city-dialog-heading p { max-width: 350px; margin: 10px 0 0; color: #4b6375; font-size: 14px; line-height: 1.7; }
+.city-dialog button { color: inherit; font: inherit; cursor: pointer; }
+.city-dialog button:disabled { cursor: wait; opacity: .65; }
+.city-dialog-close { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; margin: -8px -8px 0 0; border: 0; border-radius: 50%; background: transparent; }
+.city-dialog-close:hover { background: #d1e2ef; }
+.city-dialog-form { margin-top: 28px; }
+.city-dialog-label { display: block; margin-bottom: 9px; color: #405a6d; font-size: 12px; font-weight: 650; }
+.city-dialog-search { display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 4px 5px 4px 15px; border: 1px solid #a8bfce; border-radius: 13px; background: #ffffffc7; color: #5c778a; transition: border-color .18s, box-shadow .18s; }
+.city-dialog-search:focus-within { border-color: #2c688f; box-shadow: 0 0 0 3px #3777a120; }
+.city-dialog-search[data-invalid=true] { border-color: #aa553d; }
+.city-dialog-search input { width: 100%; min-width: 0; padding: 8px 0; border: 0; outline: 0; background: transparent; color: #163a53; font: inherit; font-size: 16px; }
+.city-dialog-search input::placeholder { color: #708798; opacity: 1; }
+.city-dialog-search input:focus-visible { outline: none; }
+.city-dialog-search>svg { flex-shrink: 0; }
+.city-dialog-search button { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 9px; background: #285e83; color: #fff; transition: background .18s; }
+.city-dialog-search button:hover { background: #194666; }
+.city-dialog-validation { margin: 9px 0 0; color: #903d26; font-size: 13px; line-height: 1.6; }
+.city-dialog-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 22px; }
+.city-dialog-quick button { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 10px 15px; border: 1px solid #bbcedb; border-radius: 11px; background: #f4f8fc88; text-align: left; font-size: 14px; transition: background .18s, border-color .18s; }
+.city-dialog-quick button>svg { color: #678295; }
+.city-dialog-quick button:hover { background: #fff; border-color: #83a4bb; }
+.city-dialog-quick button[aria-current=location] { border-color: #6e98b4; background: #d3e6f3; }
+.city-dialog-location { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; padding: 12px; margin-top: 19px; border: 0; border-radius: 11px; background: #dce9f3; font-size: 14px!important; }
+.city-dialog-location:hover { background: #d0e1ee; }
+.city-dialog-pending { margin: 17px 0 0; color: #456176; font-size: 13px; line-height: 1.6; }
+.city-dialog-feedback { padding: 15px; margin-top: 17px; border: 1px solid #cfae9f; border-radius: 12px; background: #fff6ee; color: #783f2d; font-size: 13px; line-height: 1.65; }
+.city-dialog-feedback p { margin: 0; }
+.city-dialog-feedback button { min-height: 44px; padding: 7px 0; margin-top: 5px; border: 0; background: transparent; text-decoration: underline; text-underline-offset: 3px; font-size: 13px; }
+.city-dialog :focus-visible { outline: 2px solid #245c83; outline-offset: 3px; }
+@media(max-width: 480px) {
+  .city-dialog { width: calc(100% - 28px); padding: 24px 20px; border-radius: 21px; }
+  .city-dialog-heading h2 { font-size: 23px; }
+  .city-dialog-heading p { font-size: 13px; }
+  .city-dialog-form { margin-top: 23px; }
+  .city-dialog-quick { gap: 8px; }
+  .city-dialog-quick button { padding-left: 12px; padding-right: 12px; }
+}
+@media(prefers-reduced-motion: reduce) { .city-dialog * { transition: none!important; animation: none!important; } }
