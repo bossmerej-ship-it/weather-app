@@ -84,14 +84,17 @@
 .scene-touch:disabled { cursor: default; }
 .scene-touch:focus-visible { outline: 2px solid #fff; outline-offset: -8px; }
 .scene-reactions { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
-.scene-air-trail { position: absolute; width: 110px; height: 48px; margin: -24px -55px; border-radius: 50%; background: radial-gradient(ellipse, #f2faff1c, #e0f4ff08 45%, transparent 72%); filter: blur(5px); animation: air-trail .9s ease-out both; }
+.scene-cursor-glow { position: absolute; left: 0; top: 0; width: 220px; height: 160px; margin: -80px -110px; border-radius: 50%; background: radial-gradient(ellipse, #f1faff24, #d7f0ff08 45%, transparent 72%); filter: blur(12px); opacity: var(--cursor-visible, 0); transform: translate3d(var(--cursor-x, -300px), var(--cursor-y, -300px), 0); transition: transform .18s ease-out, opacity .35s ease-out; }
+.scene-air-trail { position: absolute; width: 110px; height: 27px; margin: -13px -55px; border-radius: 50%; background: radial-gradient(ellipse, #f2faff38, #e0f4ff10 45%, transparent 72%); filter: blur(4px); animation: air-trail .9s ease-out both; }
 .scene-reaction { position: absolute; width: 1px; height: 1px; }
-.reaction-glow { position: absolute; width: 300px; height: 200px; margin: -100px -150px; border-radius: 50%; background: radial-gradient(ellipse, #eaf8ff29, #dbf2ff0b 45%, transparent 72%); animation: reaction-glow 1.5s ease-out both; }
-.reaction-wisp { position: absolute; width: 140px; height: 18px; margin: -8px -70px; border-radius: 50%; background: radial-gradient(ellipse, #effaff2e, transparent 72%); filter: blur(3px); animation: reaction-wind 1.5s ease-out both; }
-.reaction-wisp-two { margin-top: 18px; width: 100px; animation-delay: .08s; }
-.scene-interaction[data-scene='rain'] .reaction-glow, .scene-interaction[data-scene='storm'] .reaction-glow { background: radial-gradient(ellipse, #ccedff30, #d3efff0a 42%, transparent 72%); }
-.scene-interaction[data-scene='snow'] .reaction-wisp { background: radial-gradient(ellipse, #fff7, transparent 70%); }
-.scene-interaction[data-scene='night'] .reaction-glow { opacity: .5; }
+.reaction-core { position: absolute; width: 250px; height: 170px; margin: -85px -125px; border-radius: 50%; background: radial-gradient(ellipse, #edfaff52, #e3f6ff14 38%, transparent 70%); filter: blur(5px); animation: reaction-bloom 1.4s ease-out both; }
+.reaction-wave { position: absolute; width: 80px; height: 42px; margin: -21px -40px; border: 1px solid; border-color: #ecf9ff8c transparent #e2f5ff59 transparent; border-radius: 50%; filter: blur(.7px); animation: reaction-wave 1.35s cubic-bezier(.15,.6,.25,1) both; }
+.reaction-wave-echo { animation-delay: .12s; animation-duration: 1.25s; }
+.reaction-current { position: absolute; width: 170px; height: 20px; margin: -10px -85px; border-radius: 50%; background: radial-gradient(ellipse, #effaff5c, transparent 70%); filter: blur(4px); animation: reaction-current 1.3s ease-out both; }
+.reaction-current-two { margin-top: 13px; animation-name: reaction-current-back; animation-delay: .08s; }
+.scene-interaction[data-scene='rain'] .reaction-wave, .scene-interaction[data-scene='storm'] .reaction-wave { border-top-color: #c4eaff94; border-bottom-color: #c4eaff4d; }
+.scene-interaction[data-scene='snow'] .reaction-core { background: radial-gradient(ellipse, #ffffff66, #f3fbff14 40%, transparent 70%); }
+.scene-interaction[data-scene='night'] .scene-reaction, .scene-interaction[data-scene='night'] .scene-cursor-glow { filter: brightness(.65); }
 .motion-paused *, .motion-paused *::before, .motion-paused *::after { animation-play-state: paused !important; }
 .motion-paused .scene-layer { animation: none; }
 .motion-paused .scene-landscape { transform: scale(1.035); transition: none; will-change: auto; }
@@ -104,9 +107,11 @@
 @keyframes sunlight { from { opacity: .65; transform: scale(1); } to { opacity: .9; transform: scale(1.06); } }
 @keyframes rainfall { to { background-position: -14px 110px, -19px 140px; } }
 @keyframes snowfall { to { background-position: 24px 175px; } }
-@keyframes air-trail { from { opacity: .7; transform: translateX(-4px) scale(.7); } to { opacity: 0; transform: translateX(16px) scale(1.35); } }
-@keyframes reaction-glow { 0% { opacity: 0; transform: scale(.5); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.5); } }
-@keyframes reaction-wind { 0% { opacity: 0; transform: translateX(-25px) scaleX(.5) rotate(-6deg); } 20% { opacity: .8; } 100% { opacity: 0; transform: translateX(60px) scaleX(1.7) rotate(-6deg); } }
+@keyframes air-trail { from { opacity: .65; transform: rotate(var(--trail-angle, 0deg)) translateX(-15px) scale(var(--trail-stretch, 1), .6); } to { opacity: 0; transform: rotate(var(--trail-angle, 0deg)) translateX(28px) scale(var(--trail-stretch, 1), 1.6); } }
+@keyframes reaction-bloom { 0% { opacity: 0; transform: scale(.25); } 18% { opacity: .95; } 100% { opacity: 0; transform: scale(1.8); } }
+@keyframes reaction-wave { 0% { opacity: 0; transform: rotate(-12deg) scale(.45); } 12% { opacity: .8; } 100% { opacity: 0; transform: rotate(-12deg) scale(5.2, 4.2); } }
+@keyframes reaction-current { 0% { opacity: 0; transform: translateX(-18px) rotate(-18deg) scaleX(.35); } 18% { opacity: .8; } 100% { opacity: 0; transform: translate(85px, -18px) rotate(-18deg) scaleX(1.65); } }
+@keyframes reaction-current-back { 0% { opacity: 0; transform: translateX(18px) rotate(-18deg) scaleX(.35); } 18% { opacity: .6; } 100% { opacity: 0; transform: translate(-80px, 18px) rotate(-18deg) scaleX(1.6); } }
 
 @media (max-width: 600px) {
   .scene-landscape { background-position: 47% center; }
@@ -120,3 +125,4 @@
   .scene-cloud { will-change: auto; }
   .scene-reactions { display: none; }
 }
+@media (hover: none) { .scene-cursor-glow, .scene-air-trail { display: none; } }

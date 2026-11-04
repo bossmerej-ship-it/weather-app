@@ -49,9 +49,11 @@ export function SceneBackground({ scene, motion, intensity = .45, isDay = true }
         disabled={!motion} aria-label="Оживить небо" aria-describedby="scene-hint" />
       <span id="scene-hint" className="sr-only">Нажмите на свободное небо, чтобы вызвать лёгкий порыв ветра.</span>
       <div className="scene-reactions" aria-hidden="true">
-        {motion && trails.map(({ id, x, y }) => <span key={id} className="scene-air-trail" style={{ left: x, top: y }} />)}
+        {motion && <span className="scene-cursor-glow" />}
+        {motion && trails.map(({ id, x, y, angle, stretch }) => <span key={id} className="scene-air-trail" style={{ left: x, top: y, '--trail-angle': angle + 'deg', '--trail-stretch': stretch }} />)}
         {motion && reactions.map(({ id, x, y }) => <div key={id} className="scene-reaction" style={{ left: x, top: y }}>
-          <span className="reaction-glow" /><span className="reaction-wisp" /><span className="reaction-wisp reaction-wisp-two" />
+          <span className="reaction-core" /><span className="reaction-wave" /><span className="reaction-wave reaction-wave-echo" />
+          <span className="reaction-current" /><span className="reaction-current reaction-current-two" />
         </div>)}
       </div>
     </div>

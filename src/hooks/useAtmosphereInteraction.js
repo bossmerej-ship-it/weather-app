@@ -46,6 +46,8 @@ export function useAtmosphereInteraction(motion) {
     const center = () => {
       backgroundRef.current?.style.setProperty('--parallax-x', '0px');
       backgroundRef.current?.style.setProperty('--parallax-y', '0px');
+      surface.style.setProperty('--cursor-visible', '0');
+      lastTrail.current = { time: 0, x: 0, y: 0 };
     };
     if (!motion) {
       center();
@@ -64,18 +66,28 @@ export function useAtmosphereInteraction(motion) {
     let frame = 0;
     const move = (event) => {
       pointerMove(event);
-      if (event.pointerType === 'touch' || overControl(event.target)) return;
+      if (event.pointerType === 'touch' || overControl(event.target)) {
+        cancelAnimationFrame(frame);
+        center();
+        return;
+      }
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const rect = surface.getBoundingClientRect();
         if (!rect.width || !rect.height) return;
         const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
         const y = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
+        surface.style.setProperty('--cursor-x', x + 'px');
+        surface.style.setProperty('--cursor-y', y + 'px');
+        surface.style.setProperty('--cursor-visible', '1');
         backgroundRef.current?.style.setProperty('--parallax-x', (x / rect.width - .5) * -14 + 'px');
         backgroundRef.current?.style.setProperty('--parallax-y', (y / rect.height - .5) * -10 + 'px');
         const now = Date.now();
         const last = lastTrail.current;
-        if (now - last.time < 80 || Math.hypot(x - last.x, y - last.y) < 20) return;
+        const distance = Math.hypot(x - last.x, y - last.y);
+        if (now - last.time < 80 || distance < 20) return;
+        const angle = last.time === 0 ? 0 : Math.atan2(y - last.y, x - last.x) * 180 / Math.PI;
+        const stretch = Math.min(1.8, 1 + distance / 180);
         lastTrail.current = { time: now, x, y };
         const id = ++serial.current;
         if (trailTimers.current.size >= MAX_TRAILS) {
@@ -83,7 +95,7 @@ export function useAtmosphereInteraction(motion) {
           clearTimeout(trailTimers.current.get(oldest));
           trailTimers.current.delete(oldest);
         }
-        setTrails((previous) => [...previous.slice(-(MAX_TRAILS - 1)), { id, x, y }]);
+        setTrails((previous) => [...previous.slice(-(MAX_TRAILS - 1)), { id, x, y, angle, stretch }]);
         trailTimers.current.set(id, setTimeout(() => {
           setTrails((previous) => previous.filter((item) => item.id !== id));
           trailTimers.current.delete(id);
@@ -97,6 +109,7 @@ export function useAtmosphereInteraction(motion) {
       surface.removeEventListener('pointermove', move);
       surface.removeEventListener('pointerleave', leave);
       cancelAnimationFrame(frame);
+      center();
     };
   }, [motion, pointerMove]);
 
