@@ -4,7 +4,6 @@ import { AtmosphereControls } from './components/AtmosphereControls';
 import { CurrentWeather } from './components/CurrentWeather';
 import { CitySearchDialog } from './components/CitySearchDialog';
 import { DailyForecast, HourlyForecast } from './components/ForecastPanels';
-import { MotionToggle } from './components/MotionToggle';
 import { Reveal } from './components/Reveal';
 import { SceneBackground } from './components/SceneBackground';
 import { SunDetails } from './components/SunDetails';
@@ -47,6 +46,16 @@ export default function App() {
     if (result) setSearchOpen(false);
   }
 
+  function goToForecast(event) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    const target = document.getElementById('forecast');
+    if (!target) return;
+    event.preventDefault();
+    if (window.location.hash !== '#forecast') window.history.pushState(null, '', '#forecast');
+    target.scrollIntoView({ behavior: motion ? 'smooth' : 'auto', block: 'start' });
+    target.focus({ preventScroll: true });
+  }
+
   useEffect(() => {
     document.title = weather ? cityName(weather.location.name) + ' ' + temperature(weather.current.temp_c, unit) + '°' + unit.toUpperCase() + ' — NEBO' : 'NEBO — погода по часам и дням';
   }, [weather, unit]);
@@ -57,7 +66,6 @@ export default function App() {
     <main id="weather-main">
       <section className="sky-hero" aria-label="Погода сейчас">
         <header className="hero-header"><a href="/" className="brand" aria-label="NEBO — на главную">NEBO<span aria-hidden="true">.</span></a>
-          <MotionToggle paused={paused} setPaused={setPaused} reducedMotion={reducedMotion} compact />
         </header>
         <div className="hero-weather">
           {weather ? <CurrentWeather weather={weather} unit={unit} loading={loading} onChooseCity={() => setSearchOpen(true)} /> :
@@ -68,7 +76,7 @@ export default function App() {
           {weather && loading && <p className="hero-loading" role="status">Обновляем погоду…</p>}
           {weather && feedback && !searchOpen && <WeatherError error={feedback} onRetry={retryAndClose} />}
         </div>
-        <a className="forecast-cue" href="#forecast"><span>Прогноз ниже</span><ArrowDown size={18} aria-hidden="true" /></a>
+        <a className="forecast-cue" href="#forecast" onClick={goToForecast} aria-label="Перейти к прогнозу"><ArrowDown size={20} aria-hidden="true" /></a>
       </section>
       <div className="forecast-shell" id="forecast" tabIndex={-1}>
         <div className="forecast-container">
