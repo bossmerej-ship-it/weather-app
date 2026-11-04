@@ -227,6 +227,145 @@ test('repeated sky clicks and keyboard activation reuse one bounded gust', () =>
   assert.equal(frames.size, 0);
 });
 
+test('visible click reactions use local coordinates, center keyboard input and expire', (context) => {
+  context.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1000 });
+  const fixture = mountAtmosphere();
+  fireEvent.click(fixture.button, { detail: 1, clientX: 180, clientY: 180 });
+  assert.deepEqual(fixture.state.reactions.map(({ x, y }) => ({ x, y })), [{ x: 100, y: 60 }]);
+
+  fireEvent.click(fixture.button, { detail: 0 });
+  assert.deepEqual(fixture.state.reactions.at(-1), { id: fixture.state.reactions.at(-1).id, x: 200, y: 108 });
+  fireEvent.click(fixture.button, { detail: 1, clientX: 999, clientY: -50 });
+  assert.deepEqual(fixture.state.reactions.at(-1), { id: fixture.state.reactions.at(-1).id, x: 400, y: 0 });
+  assert.equal(new Set(fixture.state.reactions.map(({ id }) => id)).size, 3);
+
+  act(() => context.mock.timers.tick(1200));
+  assert.equal(fixture.state.reactions.length, 3);
+  act(() => context.mock.timers.tick(50));
+  assert.deepEqual(fixture.state.reactions, []);
+});
+
+test('cursor feedback follows local movement, throttles small samples and fades out', (context) => {
+  context.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1000 });
+  const fixture = mountAtmosphere();
+  pointerMove(fixture.surface, 180, 180);
+  flushFrames();
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-x'), '100px');
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-y'), '60px');
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '1');
+  assert.equal(fixture.state.trails.length, 1);
+  assert.deepEqual(fixture.state.trails.map(({ x, y, angle }) => ({ x, y, angle })), [{ x: 100, y: 60, angle: 0 }]);
+
+  pointerMove(fixture.surface, 280, 180);
+  flushFrames();
+  assert.equal(fixture.state.trails.length, 1, 'Rapid events must not create a trail on every pointer frame');
+  act(() => context.mock.timers.tick(80));
+  pointerMove(fixture.surface, 185, 180);
+  flushFrames();
+  assert.equal(fixture.state.trails.length, 1, 'Tiny movements must not stack visible wisps');
+  pointerMove(fixture.surface, 280, 180);
+  flushFrames();
+  assert.equal(fixture.state.trails.length, 2);
+  assert.equal(fixture.state.trails.at(-1).angle, 0);
+  act(() => context.mock.timers.tick(80));
+  pointerMove(fixture.surface, 280, 300);
+  flushFrames();
+  assert.equal(fixture.state.trails.at(-1).angle, 90);
+  assert.ok(fixture.state.trails.every(({ scale }) => Number.isFinite(scale) && scale > 0 && scale < 3));
+
+  act(() => context.mock.timers.tick(650));
+  assert.deepEqual(fixture.state.trails, []);
+});
+
+test('the cursor follower fades when idle, refreshes on small movement and cancels on leave or pause', async (context) => {
+  context.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1000 });
+  const fixture = mountAtmosphere();
+  const style = fixture.surface.style;
+  const setProperty = context.mock.method(style, 'setProperty');
+  pointerMove(fixture.surface, 180, 180);
+  flushFrames();
+  act(() => context.mock.timers.tick(120));
+  assert.equal(style.getPropertyValue('--cursor-visible'), '1');
+
+  pointerMove(fixture.surface, 185, 185);
+  flushFrames();
+  assert.equal(fixture.state.trails.length, 1, 'Refreshing the follower must not require a new trail sample');
+  act(() => context.mock.timers.tick(60));
+  assert.equal(style.getPropertyValue('--cursor-visible'), '1', 'A previous idle deadline must not hide fresh feedback');
+  act(() => context.mock.timers.tick(120));
+  assert.equal(style.getPropertyValue('--cursor-visible'), '0');
+
+  pointerMove(fixture.surface, 220, 220);
+  flushFrames();
+  fireEvent.pointerLeave(fixture.surface);
+  assert.equal(style.getPropertyValue('--cursor-visible'), '0');
+  setProperty.mock.resetCalls();
+  act(() => context.mock.timers.tick(180));
+  assert.equal(setProperty.mock.calls.filter(({ arguments: args }) => args[0] === '--cursor-visible').length, 0,
+    'Leaving must cancel the idle timer rather than retain a delayed style update');
+
+  pointerMove(fixture.surface, 250, 250);
+  flushFrames();
+  await act(async () => fixture.setMotion(false));
+  assert.equal(style.getPropertyValue('--cursor-visible'), '0');
+  setProperty.mock.resetCalls();
+  act(() => context.mock.timers.tick(180));
+  assert.equal(setProperty.mock.calls.filter(({ arguments: args }) => args[0] === '--cursor-visible').length, 0,
+    'Pausing must cancel the pending idle timer');
+});
+
+test('repeated pointer and click feedback stays bounded while earlier effects expire', (context) => {
+  context.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1000 });
+  const fixture = mountAtmosphere();
+  for (let index = 0; index < 20; index += 1) {
+    pointerMove(fixture.surface, index % 2 ? 440 : 180, 180);
+    flushFrames();
+    assert.ok(fixture.state.trails.length <= 10);
+    act(() => context.mock.timers.tick(65));
+  }
+  assert.ok(fixture.state.trails.length > 0);
+  for (let index = 0; index < 12; index += 1) {
+    fireEvent.click(fixture.button, { detail: 1, clientX: 180 + index, clientY: 180 });
+    assert.ok(fixture.state.reactions.length <= 4);
+    assert.equal(frames.size, 1, 'Visible effects must not add perpetual animation-frame loops');
+  }
+  assert.equal(fixture.state.reactions.length, 4);
+  act(() => context.mock.timers.tick(650));
+  assert.deepEqual(fixture.state.trails, []);
+  assert.equal(fixture.state.reactions.length, 4);
+  act(() => context.mock.timers.tick(600));
+  assert.deepEqual(fixture.state.reactions, []);
+});
+
+test('pausing hides and clears visible effects without reviving them when motion resumes', async (context) => {
+  context.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1000 });
+  const fixture = mountAtmosphere();
+  fireEvent.click(fixture.button, { detail: 1, clientX: 180, clientY: 180 });
+  pointerMove(fixture.surface, 440, 180);
+  flushFrames();
+  assert.equal(fixture.state.trails.length, 1);
+  assert.equal(fixture.state.reactions.length, 1);
+
+  await act(async () => fixture.setMotion(false));
+  assert.deepEqual(fixture.state.trails, []);
+  assert.deepEqual(fixture.state.reactions, []);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
+  assert.equal(frames.size, 0);
+  act(() => context.mock.timers.tick(5000));
+  fixture.setMotion(true);
+  flushFrames(5000);
+  assert.deepEqual(fixture.state.trails, []);
+  assert.deepEqual(fixture.state.reactions, []);
+
+  pointerMove(fixture.surface, 440, 180);
+  flushFrames(5100);
+  assert.equal(fixture.state.trails.length, 1, 'Resuming accepts fresh feedback');
+  fixture.view.unmount();
+  act(() => context.mock.timers.tick(2000));
+  pointerMove(fixture.surface, 180, 180);
+  assert.equal(frames.size, 0);
+});
+
 test('cloud parallax is subtle, surface-local and ignores touch movement', () => {
   const fixture = mountAtmosphere();
   pointerMove(fixture.surface, 480, 120);
@@ -244,6 +383,7 @@ test('cloud parallax is subtle, surface-local and ignores touch movement', () =>
   assert.equal(frames.size, 0);
   assert.equal(background.style.getPropertyValue('--parallax-x'), '0px');
   assert.equal(background.style.getPropertyValue('--parallax-y'), '0px');
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
 });
 
 test('scrolling and cancelled touches do not trigger a gust, but a short tap does', () => {
@@ -254,12 +394,15 @@ test('scrolling and cancelled touches do not trigger a gust, but a short tap doe
   fireEvent.click(fixture.button, { detail: 1, clientX: 180, clientY: 250 });
   assert.equal(fixture.state.gust, 0);
   assert.equal(frames.size, 0);
+  assert.deepEqual(fixture.state.trails, []);
+  assert.deepEqual(fixture.state.reactions, []);
 
   pointerEvent(fixture.button, 'pointerdown', 180, 180, 'touch', 8);
   pointerEvent(fixture.button, 'pointercancel', 180, 180, 'touch', 8);
   fireEvent.click(fixture.button, { detail: 1, clientX: 180, clientY: 180 });
   assert.equal(fixture.state.gust, 0);
   assert.equal(frames.size, 0);
+  assert.deepEqual(fixture.state.reactions, []);
 
   pointerEvent(fixture.button, 'pointerdown', 180, 180, 'touch', 9);
   pointerEvent(fixture.button, 'pointerup', 184, 184, 'touch', 9);
@@ -267,6 +410,8 @@ test('scrolling and cancelled touches do not trigger a gust, but a short tap doe
   fireEvent.click(fixture.button, { detail: 1, clientX: 184, clientY: 184 });
   assert.equal(fixture.state.gust, 1);
   assert.equal(frames.size, 1);
+  assert.equal(fixture.state.reactions.length, 1);
+  assert.deepEqual(fixture.state.trails, []);
 });
 
 test('pausing stops the gust and pending parallax, and blocks keyboard or pointer restarts', async () => {
@@ -302,6 +447,8 @@ test('a control cancels a queued free-sky frame and centers the clouds', () => {
   flushFrames();
   assert.equal(fixture.state.gust, 0);
   assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-x'), '0px');
+  assert.deepEqual(fixture.state.trails, [], 'A cancelled sky frame must not leave a trail over a control');
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
 
   pointerMove(fixture.surface, 440, 180);
   flushFrames();
@@ -309,6 +456,7 @@ test('a control cancels a queued free-sky frame and centers the clouds', () => {
   pointerMove(control, 440, 180);
   assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-x'), '0px');
   assert.equal(frames.size, 0);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
 });
 
 test('leaving the sky centers cloud parallax and cancels its pending frame', () => {
@@ -322,6 +470,7 @@ test('leaving the sky centers cloud parallax and cancels its pending frame', () 
   assert.equal(frames.size, 0);
   assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-x'), '0px');
   assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-y'), '0px');
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
 });
 
 test('unmount cancels the shared gust and pointer frames and removes sky listeners', () => {
