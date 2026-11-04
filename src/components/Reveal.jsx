@@ -5,9 +5,11 @@ export function Reveal({ children, motion, className = '' }) {
   const ref = useRef(null);
   const [pending, setPending] = useState(false);
   useEffect(() => {
-    if (!motion || !window.IntersectionObserver) return;
     const element = ref.current;
-    if (!element || element.getBoundingClientRect().top < window.innerHeight) return;
+    if (!motion || !window.IntersectionObserver || !element || element.getBoundingClientRect().top < window.innerHeight) {
+      setPending(false);
+      return;
+    }
     setPending(true);
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) { setPending(false); observer.disconnect(); }
