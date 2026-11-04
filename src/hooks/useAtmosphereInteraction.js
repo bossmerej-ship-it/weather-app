@@ -43,7 +43,8 @@ export function useAtmosphereInteraction(motion) {
       center();
       cancelAnimationFrame(gustFrame.current);
       gustFrame.current = 0;
-      setGust(0);
+      // Clear the stored envelope before the next paint, even if motion resumes quickly.
+      queueMicrotask(() => { if (backgroundRef.current) setGust(0); });
       return;
     }
     if (!surface) return;
