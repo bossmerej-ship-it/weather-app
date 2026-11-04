@@ -27,14 +27,14 @@
   width: 135%;
   height: 95%;
   background: url('/scenes/sky-day.jpg') center 74% / cover;
-  mask-image: linear-gradient(transparent 0%, #0009 38%, #000 72%);
+  mask-image: linear-gradient(transparent 0%, #0009 38%, #000 65%, transparent 100%);
   mix-blend-mode: screen;
   opacity: .5;
   animation: cloud-drift 110s ease-in-out infinite alternate;
   will-change: transform;
 }
 .scene-cloud-two { top: -30%; left: -48%; height: 105%; width: 160%; opacity: .16; transform: scaleX(-1); animation: cloud-drift-back 145s ease-in-out infinite alternate; }
-.scene-shade { position: absolute; inset: 0; background: linear-gradient(180deg, #16395d0a 25%, #153b5c0a 50%, #16385966 100%), linear-gradient(90deg, #17395722, transparent 60%); }
+.scene-shade { position: absolute; inset: 0; background: linear-gradient(180deg, #16395d0a 25%, #153b5c0a 50%, #16385966 100%), radial-gradient(ellipse at 8% 85%, #15395959, transparent 65%); }
 .scene-clouds .scene-landscape { filter: saturate(.45) brightness(.85); }
 .scene-clouds .scene-tint { background: linear-gradient(160deg, #4e70983d, #a6b8c42b 60%, #c4d5df4d); }
 .scene-clouds .scene-cloud { opacity: .72; }
