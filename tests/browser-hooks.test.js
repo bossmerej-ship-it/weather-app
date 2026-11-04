@@ -270,6 +270,7 @@ test('pausing removes existing effects and prevents pointer or keyboard reaction
   assert.equal(fixture.state.reactions.length, 0);
   assert.equal(fixture.state.trails.length, 0);
   assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-x'), '0px');
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
 });
 
 test('interactive controls do not create trails or move the sky', () => {
@@ -278,8 +279,62 @@ test('interactive controls do not create trails or move the sky', () => {
   pointerMove(control, 440, 180);
   flushFrames();
   assert.equal(fixture.state.trails.length, 0);
-  assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-x'), '');
+  assert.equal(fixture.state.backgroundRef.current.style.getPropertyValue('--parallax-x'), '0px');
   assert.equal(frames.size, 0);
+});
+
+test('moving onto a control cancels an already queued sky frame and hides the cursor glow', () => {
+  const fixture = mountAtmosphere();
+  const control = fixture.view.getByRole('button', { name: 'Выбрать город' });
+  pointerMove(fixture.surface, 180, 180);
+  assert.equal(frames.size, 1);
+  pointerMove(control, 440, 180);
+  assert.equal(frames.size, 0, 'A control must cancel the previous free-sky frame');
+  flushFrames();
+  assert.equal(fixture.state.trails.length, 0);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
+
+  pointerMove(fixture.surface, 440, 180);
+  flushFrames();
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '1');
+  pointerMove(control, 440, 180);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
+  assert.equal(frames.size, 0);
+});
+
+test('directional trails stay finite and bounded while touch and leaving hide the cursor glow', (context) => {
+  context.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1000 });
+  const fixture = mountAtmosphere();
+  pointerMove(fixture.surface, 180, 180);
+  flushFrames();
+  assert.equal(fixture.state.trails.at(-1).angle, 0, 'The first sample has no preceding direction');
+
+  act(() => context.mock.timers.tick(80));
+  pointerMove(fixture.surface, 440, 180);
+  flushFrames();
+  assert.equal(fixture.state.trails.at(-1).angle, 0, 'Horizontal movement points along the horizontal axis');
+  act(() => context.mock.timers.tick(80));
+  pointerMove(fixture.surface, 440, 340);
+  flushFrames();
+  assert.equal(fixture.state.trails.at(-1).angle, 90, 'Vertical movement follows the cursor direction');
+  for (const trail of fixture.state.trails) {
+    assert.ok(Number.isFinite(trail.angle) && trail.angle >= -180 && trail.angle <= 180);
+    assert.ok(Number.isFinite(trail.stretch) && trail.stretch >= 1 && trail.stretch <= 1.8);
+  }
+  assert.equal(parseFloat(fixture.surface.style.getPropertyValue('--cursor-x')), 360);
+  assert.equal(parseFloat(fixture.surface.style.getPropertyValue('--cursor-y')), 220);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '1');
+
+  const trailCount = fixture.state.trails.length;
+  pointerMove(fixture.surface, 180, 180, 'touch');
+  assert.equal(frames.size, 0);
+  assert.equal(fixture.state.trails.length, trailCount);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
+  pointerMove(fixture.surface, 440, 340);
+  flushFrames();
+  fireEvent.pointerLeave(fixture.surface);
+  assert.equal(frames.size, 0);
+  assert.equal(fixture.surface.style.getPropertyValue('--cursor-visible'), '0');
 });
 
 test('air trails are throttled, bounded, expire and clean up on unmount', (context) => {
