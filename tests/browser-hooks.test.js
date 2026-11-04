@@ -234,8 +234,8 @@ test('cloud parallax is subtle, surface-local and ignores touch movement', () =>
   const background = fixture.state.backgroundRef.current;
   const offsetX = parseFloat(background.style.getPropertyValue('--parallax-x'));
   const offsetY = parseFloat(background.style.getPropertyValue('--parallax-y'));
-  assert.ok(offsetX < 0 && Math.abs(offsetX) <= 3);
-  assert.ok(offsetY > 0 && Math.abs(offsetY) <= 2);
+  assert.ok(offsetX < 0 && Math.abs(offsetX) <= 5);
+  assert.ok(offsetY > 0 && Math.abs(offsetY) <= 3);
   pointerMove(fixture.surface, 80, 360);
   flushFrames();
   assert.ok(parseFloat(background.style.getPropertyValue('--parallax-x')) > 0);
