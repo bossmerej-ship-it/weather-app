@@ -174,8 +174,8 @@
   .daily-legend, .daily-row { grid-template-columns: 57px 22px 25px minmax(18px,1fr) 25px 42px; gap: 6px; }.daily-legend { font-size: 8px; }
   .weather-details, .sun-details { padding: 20px; }.detail-pair { gap: 12px; }.detail-pair > div + div { padding-left: 12px; }.detail-pair p > span { display: block; margin-left: 0; }.wind-compass { width: 96px; height: 96px; }
 }
-@media (max-height: 550px) and (min-width: 621px) {
-  .hero-weather { bottom: 65px; }.current-temperature { font-size: 56px; }.city-trigger { font-size: 28px; }.current-condition { font-size: 16px; }.forecast-cue { left: auto; right: 18px; transform: none; }
+@media (max-height: 550px) {
+  .hero-header { top: 18px; }.hero-weather { bottom: 55px; }.current-temperature { font-size: 50px; }.city-trigger { font-size: 26px; }.current-condition { font-size: 16px; }.current-feels { font-size: 12px; }.current-kicker { font-size: 11px; }.forecast-cue { left: auto; right: 18px; bottom: 20px; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none!important; transition: none!important; scroll-behavior: auto!important; }
