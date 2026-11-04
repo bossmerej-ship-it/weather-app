@@ -30,7 +30,7 @@ export function SceneBackground({ scene, motion, intensity = .45, isDay = true }
     // Change playback speed without restarting the cloud's animation phase.
     // A short, smooth attack is followed by a gentle return to normal drift.
     const attack = Math.sin(Math.min(1, (1 - gust) / .15) * Math.PI / 2);
-    const rate = motion ? 1 + attack * gust * 3 : 1;
+    const rate = motion ? 1 + attack * gust * 4.5 : 1;
     backgroundRef.current?.querySelectorAll('.scene-cloud').forEach((cloud) => {
       cloud.getAnimations?.().forEach((animation) => animation.updatePlaybackRate?.(rate));
     });

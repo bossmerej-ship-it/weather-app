@@ -27,11 +27,12 @@
   height: 95%;
   background: url('/scenes/sky-day.jpg') center 74% / cover;
   mask-image: linear-gradient(transparent 0%, #0009 38%, #000 65%, transparent 100%);
-  opacity: .5;
-  animation: cloud-drift 95s linear infinite alternate;
+  opacity: .58;
+  animation: cloud-drift 55s linear infinite alternate;
+  animation-delay: -17s;
   will-change: transform;
 }
-.scene-cloud-two { top: -30%; left: -48%; height: 105%; width: 160%; opacity: .16; transform: scaleX(-1); animation: cloud-drift-back 135s linear infinite alternate; }
+.scene-cloud-two { top: -30%; left: -48%; height: 105%; width: 160%; opacity: .22; transform: scaleX(-1); animation: cloud-drift-back 85s linear infinite alternate; animation-delay: -38s; }
 .scene-shade { position: absolute; inset: 0; background: linear-gradient(180deg, #16395d0a 25%, #153b5c0a 50%, #16385966 100%), radial-gradient(ellipse at 8% 85%, #15395959, transparent 65%); }
 .scene-clouds .scene-landscape { filter: saturate(.45) brightness(.85); }
 .scene-clouds .scene-tint { background: linear-gradient(160deg, #4e70983d, #a6b8c42b 60%, #c4d5df4d); }
@@ -69,13 +70,16 @@
 .scene-after-dark { background: #0d243f; }
 .scene-after-dark .scene-landscape { filter: saturate(.55) brightness(.25); }
 .scene-after-dark .scene-tint { background: linear-gradient(145deg, #102d5266, #0b204866 65%, #213c5966); }
-.scene-after-dark .scene-cloud { opacity: .12; filter: brightness(.7) saturate(.3); }
-.scene-after-dark .scene-cloud-two { opacity: .07; }
+.scene-after-dark .scene-cloud { opacity: .2; filter: brightness(.8) saturate(.3); }
+.scene-after-dark .scene-cloud-two { opacity: .13; }
+.scene-after-dark.scene-clouds .scene-cloud { opacity: .24; }
+.scene-after-dark.scene-clouds .scene-cloud-two { opacity: .16; }
 .scene-after-dark .scene-sun { background: radial-gradient(circle, #daebff1c, #b9d7fc06 44%, transparent 65%); opacity: .65; }
 .scene-after-dark.scene-rain .scene-sun, .scene-after-dark.scene-storm .scene-sun, .scene-after-dark.scene-clouds .scene-sun, .scene-after-dark.scene-fog .scene-sun { opacity: 0; }
 .scene-after-dark.scene-storm .scene-landscape { filter: saturate(.25) brightness(.16); }
 .scene-night .scene-weather { position: absolute; inset: 0; opacity: .35; background-image: radial-gradient(1px 1px at 10% 12%, #f5faff 90%, transparent), radial-gradient(1px 1px at 72% 20%, #c9e7ff 90%, transparent), radial-gradient(.7px .7px at 44% 7%, #f5ebd3 90%, transparent); background-size: 420px 350px; }
-.scene-night .scene-cloud { opacity: .045; }
+.scene-night .scene-cloud { opacity: .14; }
+.scene-night .scene-cloud-two { opacity: .09; }
 
 .scene-interaction { position: absolute; inset: 0 0 auto; height: 100svh; z-index: 1; pointer-events: none; overflow: hidden; }
 .scene-touch { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; padding: 0; border: 0; background: transparent; cursor: default; pointer-events: auto; touch-action: pan-y pinch-zoom; }
@@ -87,14 +91,14 @@
 .motion-paused .scene-cloud { will-change: auto; }
 
 @keyframes scene-arrive { from { opacity: 0; } to { opacity: 1; } }
-@keyframes cloud-drift { from { transform: translate3d(-3%, 0, 0); } to { transform: translate3d(5%, -2%, 0); } }
-@keyframes cloud-drift-back { from { transform: translate3d(2%, 0, 0) scaleX(-1); } to { transform: translate3d(-4%, 2%, 0) scaleX(-1); } }
+@keyframes cloud-drift { from { transform: translate3d(-5%, 0, 0); } to { transform: translate3d(7%, -2%, 0); } }
+@keyframes cloud-drift-back { from { transform: translate3d(4%, 0, 0) scaleX(-1); } to { transform: translate3d(-6%, 2%, 0) scaleX(-1); } }
 @keyframes rainfall { to { background-position: -14px 110px, -19px 140px; } }
 @keyframes snowfall { to { background-position: 24px 175px; } }
 @media (max-width: 600px) {
   .scene-landscape { background-position: 47% center; }
   .scene-cloud { width: 190%; left: -42%; }
-  .scene-cloud-two { width: 220%; left: -80%; opacity: .1; }
+  .scene-cloud-two { width: 220%; left: -80%; }
   .scene-shade { background: linear-gradient(180deg, #17395d05 20%, #15375b08 45%, #12325280 100%); }
 }
 @media (prefers-reduced-motion: reduce) {

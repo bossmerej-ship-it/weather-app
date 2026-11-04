@@ -58,8 +58,8 @@ export function useAtmosphereInteraction(motion) {
         if (!rect.width || !rect.height) return;
         const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
         const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-        backgroundRef.current?.style.setProperty('--parallax-x', (x - .5) * -6 + 'px');
-        backgroundRef.current?.style.setProperty('--parallax-y', (y - .5) * -4 + 'px');
+        backgroundRef.current?.style.setProperty('--parallax-x', (x - .5) * -10 + 'px');
+        backgroundRef.current?.style.setProperty('--parallax-y', (y - .5) * -6 + 'px');
       });
     };
     const leave = () => { cancelAnimationFrame(frame); center(); };
@@ -83,7 +83,7 @@ export function useAtmosphereInteraction(motion) {
     let started = null;
     const settle = (timestamp) => {
       if (started === null) started = timestamp;
-      const remaining = Math.max(0, 1 - (timestamp - started) / 1800);
+      const remaining = Math.max(0, 1 - (timestamp - started) / 2000);
       setGust(remaining);
       gustFrame.current = remaining > 0 ? requestAnimationFrame(settle) : 0;
     };
