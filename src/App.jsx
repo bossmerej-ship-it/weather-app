@@ -15,6 +15,7 @@ import { useReducedMotion } from './hooks/useReducedMotion';
 import { useWeather } from './hooks/useWeather';
 import { weatherObservation } from './lib/forecast';
 import { cityName, getWeatherScene, temperature } from './lib/weather';
+import './WeatherPalette.css';
 import './App.css';
 
 export default function App() {

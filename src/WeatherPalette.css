@@ -1,0 +1,50 @@
+.weather-app {
+  --ink: #f7fbff;
+  --muted: #d2e2ef;
+  --line: #e7f3ff30;
+  --weather-cloud: #dceaf5;
+  --weather-sun: #f6d59e;
+  --weather-ice: #aee6ff;
+  --weather-moon: #c5cdf6;
+  --weather-accent: var(--weather-cloud);
+  --forecast-upper: #13395666;
+  --forecast-middle: #113351d9;
+  --forecast-lower: #102e4bf2;
+  --forecast-glass: #142e49ab;
+  --forecast-tooltip: #1b354e;
+  --matte-surface: #1c3448;
+}
+
+.weather-app[data-day="true"][data-scene="clear"] {
+  --weather-accent: var(--weather-sun);
+  --forecast-upper: #3b536166;
+  --forecast-middle: #233b4fdc;
+  --forecast-lower: #1c3145f2;
+  --forecast-glass: #233b51b8;
+  --forecast-tooltip: #293c4c;
+  --matte-surface: #233949;
+}
+
+.weather-app[data-day="true"]:is([data-scene="rain"], [data-scene="snow"], [data-scene="storm"]) {
+  --forecast-upper: #193c5066;
+  --forecast-middle: #14384cde;
+  --forecast-lower: #112d40f2;
+  --forecast-glass: #133349b8;
+  --forecast-tooltip: #1a384c;
+  --matte-surface: #1a3446;
+}
+
+.weather-app[data-day="false"] {
+  --weather-accent: var(--weather-moon);
+  --forecast-upper: #111e3666;
+  --forecast-middle: #0d1b33de;
+  --forecast-lower: #0a1528f5;
+  --forecast-glass: #132640b8;
+  --forecast-tooltip: #1a2d48;
+  --matte-surface: #14243a;
+  --muted: #cedaf0;
+}
+
+.weather-app:is([data-scene="rain"], [data-scene="snow"], [data-scene="storm"]) {
+  --weather-accent: var(--weather-ice);
+}
