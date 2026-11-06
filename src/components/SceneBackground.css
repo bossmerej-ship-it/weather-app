@@ -50,16 +50,29 @@
     linear-gradient(160deg, #173c6173, #7298ad24 72%);
 }
 .scene-rain .scene-cloud { opacity: .5; }
-.scene-rain .scene-weather, .scene-storm .scene-weather {
+:is(.scene-rain, .scene-storm) .scene-weather {
   position: absolute;
-  inset: -100px;
-  opacity: var(--precip-opacity);
-  background-image:
-    linear-gradient(102deg, transparent 49.4%, #b9e9ffca 49.6%, transparent 50%),
-    linear-gradient(102deg, transparent 49.4%, #9ddcff96 49.6%, transparent 50%);
-  background-size: 61px 110px, 97px 140px;
-  mask-image: linear-gradient(transparent 5%, #0009 30%, #000 70%, transparent);
+  inset: 0;
+  opacity: var(--rain-opacity);
+  mask-image: linear-gradient(transparent, #000b 15%, #000 38%, #000b 72%, #0005);
+}
+:is(.scene-rain, .scene-storm) .scene-weather::before,
+:is(.scene-rain, .scene-storm) .scene-weather::after {
+  --rain-tile-width: 180px;
+  --rain-tile-height: 220px;
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--rain-tile-height)) -18vh 0;
+  background: url('/scenes/rain-streaks.svg') 0 0 / var(--rain-tile-width) var(--rain-tile-height) repeat;
+  transform: skewX(-8deg);
   animation: rainfall var(--rain-speed) linear infinite;
+}
+:is(.scene-rain, .scene-storm) .scene-weather::before {
+  --rain-tile-width: 144px;
+  --rain-tile-height: 176px;
+  background-position: 43px 31px;
+  opacity: .48;
+  animation-duration: calc(var(--rain-speed) * 1.55);
 }
 .scene-storm .scene-landscape { filter: saturate(.1) brightness(.48); }
 .scene-storm .scene-tint {
@@ -147,7 +160,8 @@
 @keyframes scene-arrive { from { opacity: 0; } to { opacity: 1; } }
 @keyframes cloud-drift { from { transform: translate3d(-5%, 0, 0); } to { transform: translate3d(7%, -2%, 0); } }
 @keyframes cloud-drift-back { from { transform: translate3d(4%, 0, 0) scaleX(-1); } to { transform: translate3d(-6%, 2%, 0) scaleX(-1); } }
-@keyframes rainfall { to { background-position: -14px 110px, -19px 140px; } }
+/* Each layer travels exactly one repeat so the next cycle starts in the same place. */
+@keyframes rainfall { to { transform: skewX(-8deg) translateY(var(--rain-tile-height)); } }
 @keyframes snowfall { to { background-position: 24px 175px; } }
 @keyframes sky-tap-bloom {
   0% { opacity: 0; transform: scale(.4); }
@@ -181,7 +195,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .scene-background * { animation: none !important; transition: none !important; }
+  .scene-background *, .scene-background *::before, .scene-background *::after {
+    animation: none !important;
+    transition: none !important;
+  }
   .cloud-plane { transform: none; }
   .scene-cloud { will-change: auto; }
   .sky-feedback, .scene-air-motes { display: none !important; }

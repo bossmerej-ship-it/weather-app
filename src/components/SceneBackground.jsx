@@ -39,7 +39,8 @@ export function SceneBackground({ scene, motion, intensity = .45, isDay = true }
   return <>
     <div ref={backgroundRef} className={'scene-background ' + (motion ? '' : 'motion-paused')} data-scene={scene} data-night={night} aria-hidden="true" style={{
       '--precip-opacity': .04 + strength * .3,
-      '--rain-speed': (1.6 - strength * .55) + 's',
+      '--rain-opacity': .28 + strength * .36,
+      '--rain-speed': (1.03 - strength * .36) + 's',
       '--snow-speed': (28 - strength * 10) + 's',
     }}>
       {layers.map((layer) => <div className={'scene-layer scene-' + layer.scene + (layer.night ? ' scene-after-dark' : '')} key={layer.id}>
