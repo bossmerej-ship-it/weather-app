@@ -8,7 +8,7 @@ export function SunDetails({ weather }) {
   const angle = Math.PI * (1 - sun.progress);
   const x = 150 + 125 * Math.cos(angle);
   const y = 140 - 120 * Math.sin(angle);
-  return <section className="sun-details glass-panel" aria-labelledby="sun-title">
+  return <section className="sun-details" aria-labelledby="sun-title">
     <div className="section-heading"><h2 id="sun-title">Световой день</h2><Sun size={19} aria-hidden="true" /></div>
     <p className="daylight-duration">{Math.floor(sun.daylightMinutes / 60)}<span> ч </span>{sun.daylightMinutes % 60}<span> мин</span></p>
     <div className="sun-arc" aria-hidden="true"><svg viewBox="0 0 300 160">

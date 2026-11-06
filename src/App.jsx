@@ -87,8 +87,15 @@ export default function App() {
           {forecastUnavailable && <div className="forecast-unavailable" role="status">Прогноз пока недоступен. Текущая погода показана выше.<button onClick={retryAndClose} type="button">Повторить</button></div>}
           {weather && <div className="forecast-content" aria-busy={loading}>
             <Reveal motion={motion}><HourlyForecast weather={weather} unit={unit} motion={motion} /></Reveal>
-            <Reveal motion={motion}><DailyForecast weather={weather} unit={unit} /></Reveal>
-            <div className="details-layout"><Reveal motion={motion}><WeatherMetrics current={weather.current} /></Reveal><Reveal motion={motion}><SunDetails weather={weather} /></Reveal></div>
+            <Reveal motion={motion}>
+              <div className="forecast-matte">
+                <DailyForecast weather={weather} unit={unit} />
+                <div className="details-layout">
+                  <WeatherMetrics current={weather.current} />
+                  <SunDetails weather={weather} />
+                </div>
+              </div>
+            </Reveal>
           </div>}
           <Reveal motion={motion}><AtmosphereControls selected={selected} setSelected={setSelected} paused={paused} setPaused={setPaused} reducedMotion={reducedMotion} /></Reveal>
           <footer className="site-footer"><span>NEBO</span><p>Погода по местному времени города.</p><a href="https://github.com/bossmerej-ship-it/weather-app" target="_blank" rel="noreferrer">GitHub<ArrowUpRight size={14} aria-hidden="true" /></a></footer>
