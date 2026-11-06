@@ -2,6 +2,8 @@
 
 [Открыть приложение](https://weather-app-sage-six-68.vercel.app/)
 
+[English quick start](#english-quick-start)
+
 Полноэкранное интерактивное небо с компактной текущей погодой. Ниже по обычной прокрутке — ближайшие часы, прогноз на три дня, ветер, влажность, давление, восход и закат.
 
 ## Интерфейс
@@ -57,3 +59,49 @@ React 19, Vite 8, Recharts, Lucide, CSS. Шрифт Manrope размещаетс
 - `public/scenes/README.md` — источники локальных изображений.
 
 Сборка Vercel: `npm run build`, результат `dist`, ключ задан в Production/Preview. GitHub Actions запускает lint, тесты и сборку при push/PR. Для сборки в CI ключ не нужен, для погодных запросов на сайте — нужен.
+
+## English quick start
+
+NEBO shows current conditions, hourly weather, and a three-day forecast. Select the city name to search for another location or use browser geolocation.
+
+### Requirements
+
+- Node.js 22.12 or newer and npm
+- A [WeatherAPI](https://www.weatherapi.com/) key
+
+### Run locally
+
+1. Clone the repository and install the locked dependencies.
+
+   ```bash
+   git clone https://github.com/bossmerej-ship-it/weather-app.git
+   cd weather-app
+   npm ci
+   ```
+
+2. Copy `.env.example` to `.env.local` in the project root and set your key.
+
+   ```dotenv
+   VITE_WEATHER_API_KEY=your_weatherapi_key
+   ```
+
+   Restart the development server after changing `.env.local`. Vite includes variables prefixed with `VITE_` in the browser bundle. Use a dedicated key with appropriate restrictions and a quota.
+
+3. Start the development server.
+
+   ```bash
+   npm run dev
+   ```
+
+   Open the local URL printed by Vite. NEBO opens with Astana selected. Browser geolocation requires HTTPS or `localhost`.
+
+### Check and build
+
+```bash
+npm test
+npm run lint
+npm run build
+npm run preview
+```
+
+The production build is written to `dist`. For Vercel, set `VITE_WEATHER_API_KEY` in the project's environment settings.
