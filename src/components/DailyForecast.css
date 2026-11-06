@@ -24,7 +24,8 @@
 .daily-low, .daily-high { font-size: 17px; font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
 .daily-low { color: var(--muted); }
 .daily-high { font-weight: 650; }
-.daily-chance { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #bde5ff; font-size: 14px; white-space: nowrap; }
+.daily-chance { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--muted); font-size: 14px; white-space: nowrap; }
+.daily-chance[data-precipitation="possible"] { color: var(--weather-ice); }
 
 .daily-range {
   position: relative;

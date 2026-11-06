@@ -59,11 +59,13 @@
 .hourly-times, .hourly-rain { display: grid; grid-template-columns: repeat(var(--hour-count), minmax(0, 1fr)); text-align: center; }
 .hourly-times > div { display: flex; flex-direction: column; align-items: center; gap: 12px; color: #e4eef9; font-size: 14px; }
 .hourly-times > div:first-child > span { color: #fff; font-weight: 700; }
-.hourly-times svg { color: #e0effa; }
+.hourly-times svg { color: var(--weather-cloud); }
 .temperature-chart { height: 128px; width: 100%; margin-top: 10px; }
-.hourly-rain > div { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 13px; color: #bce6ff; }
+.hourly-rain > div { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 13px; color: var(--muted); }
+.hourly-rain > [data-precipitation="possible"] { color: var(--weather-ice); }
 .forecast-key { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .forecast-key p, .scroll-hint { display: flex; align-items: center; gap: 6px; }
+.forecast-key p > svg { color: var(--weather-ice); }
 .scroll-hint { display: none; white-space: nowrap; }
 .forecast-matte {
   --line: #c9deef2c;

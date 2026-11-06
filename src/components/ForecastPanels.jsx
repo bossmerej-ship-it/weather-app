@@ -26,10 +26,22 @@ export function HourlyForecast({ weather, unit, motion }) {
       <div className="hourly-content" style={{ '--hour-count': points.length }}>
         <div className="hourly-times">{points.map((hour) => <div key={hour.time_epoch}><span>{hour.time.slice(0,13) === weather.location.localtime.slice(0,13) ? 'Этот час' : hour.timeLabel}</span><WeatherIcon kind={iconKind(hour)} size={26} /></div>)}</div>
         <div className="temperature-chart"><Suspense fallback={<span className="sr-only">Температура по часам</span>}><HourlyChart points={points} unit={unit} motion={motion} tooltipPortal={tooltipPortal} /></Suspense></div>
-        <div className="hourly-rain">{points.map(hour => { const chance=precipitationChance(hour); const snow=precipitationType(hour)==='snow'; return <div key={hour.time_epoch} title={chance===null?'Вероятность недоступна':`${snow?'Снег':'Дождь'}: ${chance}%`}>{snow?<Snowflake size={13} aria-hidden="true" />:<Droplets size={13} aria-hidden="true" />}<span>{chance===null?'—':`${chance}%`}</span></div>; })}</div>
+        <div className="hourly-rain">{points.map(hour => {
+          const chance = precipitationChance(hour);
+          const snow = precipitationType(hour) === 'snow';
+          const PrecipitationIcon = snow ? Snowflake : Droplets;
+          return <div
+            key={hour.time_epoch}
+            data-precipitation={chance > 0 ? 'possible' : undefined}
+            title={chance === null ? 'Вероятность недоступна' : `${snow ? 'Снег' : 'Дождь'}: ${chance}%`}
+          >
+            <PrecipitationIcon size={13} aria-hidden="true" />
+            <span>{chance === null ? '—' : `${chance}%`}</span>
+          </div>;
+        })}</div>
       </div>
     </div>
-    <div className="forecast-key"><p><Droplets size={12} />Вероятность дождя или снега — под каждым часом</p><span className="scroll-hint">Листайте часы<ArrowRight size={13} /></span></div>
+    <div className="forecast-key"><p><Droplets size={12} aria-hidden="true" />Вероятность дождя или снега — под каждым часом</p><span className="scroll-hint">Листайте часы<ArrowRight size={13} /></span></div>
     <div className="sr-only"><table><caption>Почасовой прогноз</caption><thead><tr><th>Время</th><th>Температура °{unit.toUpperCase()}</th><th>Погода</th><th>Вероятность дождя или снега</th></tr></thead><tbody>{points.map(hour=><tr key={hour.time_epoch}><th>{hour.timeLabel}</th><td>{hour.degrees}</td><td>{hour.condition.text}</td><td>{precipitationChance(hour)===null?'Нет данных':`${precipitationType(hour)==='snow'?'Снег':'Дождь'}: ${precipitationChance(hour)}%`}</td></tr>)}</tbody></table></div>
   </section>;
 }
@@ -65,7 +77,7 @@ export function DailyForecast({ weather, unit }) {
           <span style={{ left: `${(mintemp_c - low) / range * 100}%`, width: `${(maxtemp_c - mintemp_c) / range * 100}%` }} />
         </div>
         <strong className="daily-high"><span className="sr-only">Максимум </span>{temperature(maxtemp_c, unit)}°</strong>
-        <span className="daily-chance">
+        <span className="daily-chance" data-precipitation={chance > 0 ? 'possible' : undefined}>
           <PrecipitationIcon size={14} aria-hidden="true" />
           {chance === null
             ? <><span aria-hidden="true">—</span><span className="sr-only">Нет данных об осадках</span></>
