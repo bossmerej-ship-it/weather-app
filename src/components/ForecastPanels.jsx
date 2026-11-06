@@ -60,16 +60,17 @@ export function DailyForecast({ weather, unit }) {
     </div>
     <div className="daily-rows">{days.map(day => {
       const { mintemp_c, maxtemp_c, condition } = day.day;
+      const kind = iconKind(day.day);
       const chance = precipitationChance(day.day, true);
       const snow = precipitationType(day.day, true) === 'snow';
       const PrecipitationIcon = snow ? Snowflake : Droplets;
-      return <div className="daily-row" key={day.date}>
+      return <div className="daily-row" data-weather-kind={kind} key={day.date}>
         <div className="daily-day">
           <strong>{forecastDayLabel(day, weather)}</strong>
           <span>{day.date.slice(8)}.{day.date.slice(5, 7)}</span>
         </div>
         <div className="daily-condition">
-          <WeatherIcon kind={iconKind(day.day)} size={25} />
+          <WeatherIcon kind={kind} size={25} />
           <span>{condition.text}</span>
         </div>
         <span className="daily-low"><span className="sr-only">Минимум </span>{temperature(mintemp_c, unit)}°</span>

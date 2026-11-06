@@ -15,7 +15,16 @@
 
 .daily-legend > span:first-child { grid-column: span 2; text-align: left; }
 .daily-legend > span:last-child { text-align: right; }
-.daily-row { min-height: 78px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+.daily-row {
+  --day-range-accent: var(--weather-cloud);
+  min-height: 78px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.daily-row[data-weather-kind="clear"] { --day-range-accent: var(--weather-sun); }
+.daily-row:is([data-weather-kind="rain"], [data-weather-kind="snow"], [data-weather-kind="storm"]) {
+  --day-range-accent: var(--weather-ice);
+}
 .daily-day { min-width: 0; overflow-wrap: anywhere; }
 .daily-day strong { display: block; font-size: 16px; font-weight: 650; }
 .daily-day > span { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
@@ -40,7 +49,7 @@
   top: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #a9d8f7, #f0d89f);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--day-range-accent) 62%, var(--matte-surface)), var(--day-range-accent));
 }
 
 .daily-note { margin-top: 14px; color: var(--muted); font-size: 13px; line-height: 1.6; }
