@@ -6,7 +6,7 @@ export function SceneBackground({ scene, motion, intensity = .45, isDay = true }
   const night = scene === 'night' || !isDay;
   const [layers, setLayers] = useState([{ scene, night, id: 0 }]);
   const serial = useRef(0);
-  const { backgroundRef, surfaceRef, gust, trails, reactions, react, pointerDown, pointerMove, pointerUp, pointerCancel } = useAtmosphereInteraction(motion);
+  const { backgroundRef, surfaceRef, windRef, gust, reactions, react, pointerDown, pointerMove, pointerUp, pointerCancel } = useAtmosphereInteraction(motion);
   const strength = Number.isFinite(intensity) ? Math.max(0, Math.min(1, intensity)) : .45;
 
   useEffect(() => {
@@ -60,8 +60,9 @@ export function SceneBackground({ scene, motion, intensity = .45, isDay = true }
         disabled={!motion} aria-label="Оживить небо" aria-describedby="scene-hint" />
       <span id="scene-hint" className="sr-only">Нажмите на свободное небо, чтобы вызвать лёгкий порыв ветра.</span>
       {motion && <div className="sky-feedback" aria-hidden="true">
-        <span className="sky-cursor-wisp" />
-        {trails.map(({ id, x, y, angle, scale }) => <span key={id} className="sky-trail" style={{ left: x, top: y, '--trail-angle': angle + 'deg', '--trail-scale': scale }} />)}
+        <svg className="sky-wind-layer" focusable="false">
+          <path ref={windRef} className="sky-wind" opacity="0" />
+        </svg>
         {reactions.map(({ id, x, y }) => <div key={id} className="sky-tap" style={{ left: x, top: y }}>
           <i className="sky-tap-haze" /><i className="sky-tap-wind" /><i className="sky-tap-wind sky-tap-wind-second" />
         </div>)}

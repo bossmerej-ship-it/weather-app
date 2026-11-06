@@ -86,19 +86,8 @@
 .scene-touch:disabled { cursor: default; }
 .scene-touch:focus-visible { outline: 2px solid #fff; outline-offset: -8px; }
 .sky-feedback { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
-.sky-cursor-wisp {
-  position: absolute; left: 0; top: 0; width: 80px; height: 26px; margin: -13px -40px;
-  border-radius: 50%; filter: blur(4px);
-  background: radial-gradient(ellipse, #f3fbff80, #e0f3ff26 40%, transparent 72%);
-  opacity: var(--cursor-visible, 0);
-  transform: translate3d(var(--cursor-x, -200px), var(--cursor-y, -200px), 0);
-  transition: transform .12s ease-out, opacity .22s ease-out;
-}
-.sky-trail {
-  position: absolute; width: 64px; height: 17px; margin: -8px -32px; border-radius: 50%;
-  background: radial-gradient(ellipse, #f6fcff73, #dff3ff1c 45%, transparent 73%);
-  filter: blur(3px); animation: sky-trail-fade .65s ease-out both;
-}
+.sky-wind-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sky-wind { fill: #edf9ff91; filter: blur(2.6px); }
 .sky-tap { position: absolute; width: 1px; height: 1px; }
 .sky-tap-haze {
   position: absolute; width: 140px; height: 90px; margin: -45px -70px; border-radius: 50%;
@@ -111,7 +100,7 @@
   filter: blur(3px); animation: sky-tap-flow 1.15s ease-out both;
 }
 .sky-tap-wind-second { width: 105px; margin: 8px -52px; animation-name: sky-tap-flow-back; animation-delay: .06s; }
-.scene-interaction[data-night="true"] .sky-cursor-wisp { background: radial-gradient(ellipse, #e6f5ff6b, #c9e9ff1a 42%, transparent 72%); }
+.scene-interaction[data-night="true"] .sky-wind { fill: #d9edff78; }
 .scene-interaction[data-night="true"] .sky-tap-haze { background: radial-gradient(ellipse, #dfedff66, #c8e4ff1c 40%, transparent 71%); }
 .scene-interaction[data-scene="snow"] .sky-tap-wind { background: radial-gradient(ellipse, #ffffffb3, #edf8ff26 45%, transparent 73%); }
 .scene-air-motes { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
@@ -137,10 +126,6 @@
 @keyframes cloud-drift-back { from { transform: translate3d(4%, 0, 0) scaleX(-1); } to { transform: translate3d(-6%, 2%, 0) scaleX(-1); } }
 @keyframes rainfall { to { background-position: -14px 110px, -19px 140px; } }
 @keyframes snowfall { to { background-position: 24px 175px; } }
-@keyframes sky-trail-fade {
-  from { opacity: .8; transform: rotate(var(--trail-angle, 0deg)) translateX(-8px) scale(var(--trail-scale, 1), .7); }
-  to { opacity: 0; transform: rotate(var(--trail-angle, 0deg)) translateX(-22px) scale(var(--trail-scale, 1), 1.5); }
-}
 @keyframes sky-tap-bloom {
   0% { opacity: 0; transform: scale(.4); }
   15% { opacity: .95; }
@@ -174,4 +159,4 @@
   .scene-cloud { will-change: auto; }
   .sky-feedback, .scene-air-motes { display: none !important; }
 }
-@media (hover: none) { .sky-cursor-wisp, .sky-trail { display: none; } }
+@media (any-hover: none) { .sky-wind-layer { display: none; } }

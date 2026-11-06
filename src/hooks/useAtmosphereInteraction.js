@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createCursorWind } from '../lib/cursorWind.js';
 
 function overControl(target) {
   const control = target?.closest?.('button, a, input, select, textarea, dialog, [data-sky-control]');
@@ -8,16 +9,13 @@ function overControl(target) {
 export function useAtmosphereInteraction(motion) {
   const backgroundRef = useRef(null);
   const surfaceRef = useRef(null);
+  const windRef = useRef(null);
   const gustFrame = useRef(0);
-  const cursorIdle = useRef(0);
   const gesture = useRef(null);
   const suppressClick = useRef(false);
   const serial = useRef(0);
-  const trailTimers = useRef(new Map());
   const reactionTimers = useRef(new Map());
-  const lastTrail = useRef({ time: null, x: 0, y: 0 });
   const [gust, setGust] = useState(0);
-  const [trails, setTrails] = useState([]);
   const [reactions, setReactions] = useState([]);
 
   const pointerDown = useCallback((event) => {
@@ -43,88 +41,69 @@ export function useAtmosphereInteraction(motion) {
   useEffect(() => {
     const surface = surfaceRef.current || backgroundRef.current?.parentElement;
     const center = () => {
-      clearTimeout(cursorIdle.current);
-      cursorIdle.current = 0;
       backgroundRef.current?.style.setProperty('--parallax-x', '0px');
       backgroundRef.current?.style.setProperty('--parallax-y', '0px');
-      surface?.style.setProperty('--cursor-visible', '0');
-      lastTrail.current = { time: null, x: 0, y: 0 };
     };
     if (!motion) {
       center();
       cancelAnimationFrame(gustFrame.current);
       gustFrame.current = 0;
-      trailTimers.current.forEach(clearTimeout);
       reactionTimers.current.forEach(clearTimeout);
-      trailTimers.current.clear();
       reactionTimers.current.clear();
       // Clear the stored envelope before the next paint, even if motion resumes quickly.
-      queueMicrotask(() => { if (backgroundRef.current) { setGust(0); setTrails([]); setReactions([]); } });
+      queueMicrotask(() => { if (backgroundRef.current) { setGust(0); setReactions([]); } });
       return;
     }
     if (!surface) return;
+    const wind = windRef.current && createCursorWind(windRef.current);
     let frame = 0;
+    let pointer = null;
+    const render = (timestamp) => {
+      frame = 0;
+      if (pointer) {
+        const { clientX, clientY } = pointer;
+        pointer = null;
+        const rect = surface.getBoundingClientRect();
+        if (rect.width && rect.height) {
+          const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+          backgroundRef.current?.style.setProperty('--parallax-x', (x - .5) * -10 + 'px');
+          backgroundRef.current?.style.setProperty('--parallax-y', (y - .5) * -6 + 'px');
+          wind?.move(x * rect.width, y * rect.height, timestamp);
+        }
+      }
+      if (wind?.draw(timestamp)) frame = requestAnimationFrame(render);
+    };
+    const leave = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      pointer = null;
+      wind?.clear();
+      center();
+    };
     const move = (event) => {
       pointerMove(event);
-      cancelAnimationFrame(frame);
-      if (event.pointerType === 'touch' || overControl(event.target)) { center(); return; }
-      frame = requestAnimationFrame(() => {
-        const rect = surface.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-        const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
-        const localX = x * rect.width;
-        const localY = y * rect.height;
-        surface.style.setProperty('--cursor-x', localX + 'px');
-        surface.style.setProperty('--cursor-y', localY + 'px');
-        surface.style.setProperty('--cursor-visible', '1');
-        clearTimeout(cursorIdle.current);
-        cursorIdle.current = setTimeout(() => {
-          surface.style.setProperty('--cursor-visible', '0');
-          cursorIdle.current = 0;
-        }, 180);
-        backgroundRef.current?.style.setProperty('--parallax-x', (x - .5) * -10 + 'px');
-        backgroundRef.current?.style.setProperty('--parallax-y', (y - .5) * -6 + 'px');
-        const now = Date.now();
-        const last = lastTrail.current;
-        const distance = last.time === null ? 0 : Math.hypot(localX - last.x, localY - last.y);
-        if (last.time !== null && (now - last.time < 65 || distance < 12)) return;
-        const angle = last.time === null ? 0 : Math.atan2(localY - last.y, localX - last.x) * 180 / Math.PI;
-        const scale = Math.min(1.6, 1 + distance / 160);
-        lastTrail.current = { time: now, x: localX, y: localY };
-        const id = ++serial.current;
-        if (trailTimers.current.size >= 10) {
-          const oldest = trailTimers.current.keys().next().value;
-          clearTimeout(trailTimers.current.get(oldest));
-          trailTimers.current.delete(oldest);
-        }
-        setTrails(previous => [...previous.slice(-9), { id, x: localX, y: localY, angle, scale }]);
-        trailTimers.current.set(id, setTimeout(() => {
-          setTrails(previous => previous.filter(item => item.id !== id));
-          trailTimers.current.delete(id);
-        }, 650));
-      });
+      if (event.pointerType === 'touch' || overControl(event.target)) {
+        leave();
+        return;
+      }
+      pointer = { clientX: event.clientX, clientY: event.clientY };
+      if (!frame) frame = requestAnimationFrame(render);
     };
-    const leave = () => { cancelAnimationFrame(frame); center(); };
     surface.addEventListener('pointermove', move, { passive: true });
     surface.addEventListener('pointerleave', leave, { passive: true });
     return () => {
       surface.removeEventListener('pointermove', move);
       surface.removeEventListener('pointerleave', leave);
-      cancelAnimationFrame(frame);
-      center();
+      leave();
     };
   }, [motion, pointerMove]);
 
   useEffect(() => {
-    const pendingTrails = trailTimers.current;
     const pendingReactions = reactionTimers.current;
     return () => {
       cancelAnimationFrame(gustFrame.current);
-      clearTimeout(cursorIdle.current);
-      pendingTrails.forEach(clearTimeout);
       pendingReactions.forEach(clearTimeout);
-      pendingTrails.clear();
       pendingReactions.clear();
     };
   }, []);
@@ -159,5 +138,5 @@ export function useAtmosphereInteraction(motion) {
     gustFrame.current = requestAnimationFrame(settle);
   }, [motion]);
 
-  return { backgroundRef, surfaceRef, gust: motion ? gust : 0, trails: motion ? trails : [], reactions: motion ? reactions : [], react, pointerDown, pointerMove, pointerUp, pointerCancel };
+  return { backgroundRef, surfaceRef, windRef, gust: motion ? gust : 0, reactions: motion ? reactions : [], react, pointerDown, pointerMove, pointerUp, pointerCancel };
 }
