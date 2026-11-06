@@ -36,7 +36,14 @@
   transition: background .18s ease-out, border-color .18s ease-out, box-shadow .18s ease-out;
 }
 .appearance-scene:hover { background: #48718d66; border-color: #d9edfc60; }
-.appearance-scene[aria-pressed="true"] { background: #e9f4fc; border-color: #e9f4fc; color: #244966; }
+.appearance-scene[aria-pressed="true"] {
+  --weather-sun: #7a4810;
+  --weather-ice: #1c5471;
+  --weather-moon: #3e4d86;
+  background: #e9f4fc;
+  border-color: #e9f4fc;
+  color: #244966;
+}
 .appearance-scene:active { box-shadow: inset 0 1px 5px #12334c33; }
 .appearance-motion-hint { color: var(--muted, #cfdfef); font-size: 11px; line-height: 1.6; margin-top: 12px; }
 .app-motion-paused .appearance-switch, .app-motion-paused .appearance-switch > span { transition: none; }

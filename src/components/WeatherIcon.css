@@ -1,0 +1,15 @@
+.weather-icon .weather-icon-sun {
+  stroke: var(--weather-sun, currentColor);
+}
+
+.weather-icon .weather-icon-ice {
+  stroke: var(--weather-ice, currentColor);
+}
+
+.weather-icon .weather-icon-snow {
+  fill: var(--weather-ice, currentColor);
+}
+
+.weather-icon .weather-icon-moon {
+  stroke: var(--weather-moon, currentColor);
+}
