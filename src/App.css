@@ -90,27 +90,29 @@
 .wind-compass::before { content: ''; position: absolute; inset: 13px; border-radius: 50%; border: 1px solid #c8e1f125; }
 .wind-compass > span { position: absolute; font-size: 11px; color: #d2e5f4; background: var(--matte-surface); padding: 2px; }
 .north { top: 1px; }.east { right: 3px; }.south { bottom: 1px; }.west { left: 3px; }
-.wind-compass > svg { color: #f2d395; z-index: 1; }
+.wind-compass > svg { color: var(--weather-cloud); z-index: 1; }
 .detail-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
 .detail-pair > div + div { border-left: 1px solid var(--line); padding-left: 26px; }
 .detail-pair p { font-size: 30px; font-variant-numeric: tabular-nums; letter-spacing: -.04em; margin-top: 9px; }
 .detail-pair p > span { display: inline-block; font-size: 13px; margin-inline-start: 5px; letter-spacing: 0; white-space: nowrap; }
 .detail-pair small { font-size: 13px; color: var(--muted); }
 .detail-pair progress { display: block; appearance: none; border: 0; width: 100%; height: 3px; background: #cfe7f92e; border-radius: 4px; margin-top: 15px; }
-.detail-pair progress::-webkit-progress-bar { background: #cfe7f92e; border-radius: 4px; }.detail-pair progress::-webkit-progress-value { background: #b9ddf8; border-radius: 4px; }.detail-pair progress::-moz-progress-bar { background: #b9ddf8; }
+.detail-pair progress::-webkit-progress-bar { background: #cfe7f92e; border-radius: 4px; }
+.detail-pair progress::-webkit-progress-value { background: var(--weather-ice); border-radius: 4px; }
+.detail-pair progress::-moz-progress-bar { background: var(--weather-ice); }
 .scale-labels { display: flex; justify-content: space-between; margin-top: 5px; font-size: 12px; color: var(--muted); }
 .daylight-duration { font-size: 34px; letter-spacing: -.04em; }
 .daylight-duration > span { font-size: 17px; letter-spacing: 0; color: #d7e8f6; }
 .sun-details .section-heading { margin-bottom: 17px; }
-.sun-details .section-heading > svg { color: #f7da9e; }
+.sun-details .section-heading > svg { color: var(--weather-sun); }
 .sun-arc { max-width: 290px; margin: -10px auto -7px; }
 .sun-arc svg { display: block; width: 100%; height: 132px; }
 .sun-arc path { fill: none; stroke-width: 2; }
-.sun-arc-base { stroke: #d1e2ef55; }.sun-arc-progress { stroke: #f3d28e; }.sun-horizon { stroke: #e4efff30; stroke-width: 1!important; }
-.sun-arc circle { fill: #ffe1a0; stroke: #fff5d8; stroke-width: 2; }
+.sun-arc-base { stroke: #d1e2ef55; }.sun-arc-progress { stroke: var(--weather-sun); }.sun-horizon { stroke: #e4efff30; stroke-width: 1!important; }
+.sun-arc circle { fill: var(--weather-sun); stroke: var(--ink); stroke-width: 2; }
 .sun-times { display: flex; justify-content: space-between; gap: 20px; }
 .sun-times > span { display: flex; gap: 9px; align-items: center; }
-.sun-times svg { flex: 0 0 auto; color: #f1d6a2; }
+.sun-times svg { flex: 0 0 auto; color: var(--weather-sun); }
 .sun-times > span > span { color: var(--muted); font-size: 13px; }
 .sun-times strong { display: block; color: #fff; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 3px; }
 .sun-note { font-size: 13px; line-height: 1.6; color: var(--muted); margin-top: 20px; text-align: center; }
