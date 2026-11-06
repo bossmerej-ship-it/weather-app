@@ -16,7 +16,11 @@
   filter: saturate(1.05) brightness(1.04);
 }
 .scene-tint { position: absolute; inset: 0; background: linear-gradient(180deg, #2d72b90a, #518fbe06 52%, #c7dfed33); }
-.scene-sun { position: absolute; width: 90vmax; height: 90vmax; right: -38vmax; top: -52vmax; border-radius: 50%; background: radial-gradient(circle, #fff6cf50, #ffecbc0c 42%, transparent 68%); }
+.scene-sun {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 54% 62% at 87% 7%, #ffdc9c6b, #f6c5832a 40%, transparent 80%);
+}
 .cloud-plane { position: absolute; inset: 0; mix-blend-mode: screen; transform: translate3d(var(--parallax-x), var(--parallax-y), 0); transition: transform .35s cubic-bezier(.2,.7,.2,1); }
 .cloud-plane-far { transform: translate3d(calc(var(--parallax-x) * .5), calc(var(--parallax-y) * .5), 0); transition-duration: .5s; }
 .scene-cloud {
@@ -37,29 +41,42 @@
 .scene-clouds .scene-landscape { filter: saturate(.45) brightness(.85); }
 .scene-clouds .scene-tint { background: linear-gradient(160deg, #4e70983d, #a6b8c42b 60%, #c4d5df4d); }
 .scene-clouds .scene-cloud { opacity: .72; }
-.scene-clouds .scene-sun, .scene-rain .scene-sun, .scene-storm .scene-sun, .scene-fog .scene-sun { opacity: 0; animation: none; }
+.scene-clouds .scene-sun { opacity: .35; }
+.scene-rain .scene-sun, .scene-storm .scene-sun, .scene-snow .scene-sun, .scene-fog .scene-sun { opacity: 0; }
 .scene-rain .scene-landscape { filter: saturate(.2) brightness(.66); }
-.scene-rain .scene-tint { background: linear-gradient(160deg, #1f436166, #7f9ead29 70%); }
+.scene-rain .scene-tint {
+  background:
+    radial-gradient(ellipse at 82% 15%, #9cdcff40, transparent 62%),
+    linear-gradient(160deg, #173c6173, #7298ad24 72%);
+}
 .scene-rain .scene-cloud { opacity: .5; }
 .scene-rain .scene-weather, .scene-storm .scene-weather {
   position: absolute;
   inset: -100px;
   opacity: var(--precip-opacity);
-  background-image: linear-gradient(102deg, transparent 49.4%, #e7f4ff94 49.6%, transparent 50%), linear-gradient(102deg, transparent 49.4%, #d5ebfa68 49.6%, transparent 50%);
+  background-image:
+    linear-gradient(102deg, transparent 49.4%, #b9e9ffca 49.6%, transparent 50%),
+    linear-gradient(102deg, transparent 49.4%, #9ddcff96 49.6%, transparent 50%);
   background-size: 61px 110px, 97px 140px;
   mask-image: linear-gradient(transparent 5%, #0009 30%, #000 70%, transparent);
   animation: rainfall var(--rain-speed) linear infinite;
 }
 .scene-storm .scene-landscape { filter: saturate(.1) brightness(.48); }
-.scene-storm .scene-tint { background: linear-gradient(160deg, #24334c99, #60748a33); }
+.scene-storm .scene-tint {
+  background:
+    radial-gradient(ellipse at 79% 17%, #81c6ed37, transparent 60%),
+    linear-gradient(160deg, #172b4a94, #42658842);
+}
 .scene-storm .scene-cloud { opacity: .45; }
 .scene-snow .scene-landscape { filter: saturate(.3) brightness(.9); }
-.scene-snow .scene-tint { background: linear-gradient(140deg, #6c94ad4d, #d4e5ec44); }
-.scene-snow .scene-sun { opacity: .2; animation: none; }
+.scene-snow .scene-tint { background: linear-gradient(140deg, #4b80a65c, #c1ebff42); }
 .scene-snow .scene-weather {
   position: absolute;
   inset: -100px;
-  background-image: radial-gradient(1.4px 1.4px at 18px 34px, #ffff 85%, transparent), radial-gradient(2px 2px at 92px 103px, #fffd 85%, transparent), radial-gradient(1px 1px at 58px 67px, #fffc 85%, transparent);
+  background-image:
+    radial-gradient(1.4px 1.4px at 18px 34px, #dff4ff 85%, transparent),
+    radial-gradient(2px 2px at 92px 103px, #bce8ffdd 85%, transparent),
+    radial-gradient(1px 1px at 58px 67px, #cfeeffcc 85%, transparent);
   background-size: 145px 175px;
   animation: snowfall var(--snow-speed) linear infinite;
   opacity: var(--precip-opacity);
@@ -67,16 +84,22 @@
 .scene-fog .scene-landscape { filter: saturate(.1) brightness(.8) blur(4px); }
 .scene-fog .scene-tint { background: linear-gradient(180deg, #afc5d44d, #bacfdaa6); }
 .scene-fog .scene-cloud { opacity: .8; filter: blur(12px); }
-.scene-after-dark { background: #0d243f; }
-.scene-after-dark .scene-landscape { filter: saturate(.55) brightness(.25); }
-.scene-after-dark .scene-tint { background: linear-gradient(145deg, #102d5266, #0b204866 65%, #213c5966); }
+.scene-after-dark {
+  --night-sky-tint: linear-gradient(155deg, #080f28b3, #162a514d 59%, #0b1736a3);
+  background: #101c36;
+}
+.scene-after-dark .scene-landscape { filter: saturate(.7) brightness(.21); }
+.scene-after-dark .scene-tint { background: var(--night-sky-tint); }
+.scene-after-dark:is(.scene-rain, .scene-storm, .scene-snow) .scene-tint {
+  background: radial-gradient(ellipse at 74% 20%, #76bce029, transparent 61%), var(--night-sky-tint);
+}
 .scene-after-dark .scene-cloud { opacity: .2; filter: brightness(.8) saturate(.3); }
 .scene-after-dark .scene-cloud-two { opacity: .13; }
 .scene-after-dark.scene-clouds .scene-cloud { opacity: .24; }
 .scene-after-dark.scene-clouds .scene-cloud-two { opacity: .16; }
-.scene-after-dark .scene-sun { background: radial-gradient(circle, #daebff1c, #b9d7fc06 44%, transparent 65%); opacity: .65; }
-.scene-after-dark.scene-rain .scene-sun, .scene-after-dark.scene-storm .scene-sun, .scene-after-dark.scene-clouds .scene-sun, .scene-after-dark.scene-fog .scene-sun { opacity: 0; }
-.scene-after-dark.scene-storm .scene-landscape { filter: saturate(.25) brightness(.16); }
+.scene-after-dark .scene-sun { background: radial-gradient(ellipse 47% 56% at 87% 7%, #a7c3ff29, #7eaffc12 42%, transparent 80%); opacity: .65; }
+.scene-after-dark:is(.scene-rain, .scene-storm, .scene-snow, .scene-clouds, .scene-fog) .scene-sun { opacity: 0; }
+.scene-after-dark.scene-storm .scene-landscape { filter: saturate(.5) brightness(.16); }
 .scene-night .scene-weather { position: absolute; inset: 0; opacity: .35; background-image: radial-gradient(1px 1px at 10% 12%, #f5faff 90%, transparent), radial-gradient(1px 1px at 72% 20%, #c9e7ff 90%, transparent), radial-gradient(.7px .7px at 44% 7%, #f5ebd3 90%, transparent); background-size: 420px 350px; }
 .scene-night .scene-cloud { opacity: .14; }
 .scene-night .scene-cloud-two { opacity: .09; }
