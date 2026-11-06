@@ -1,0 +1,61 @@
+.daily-legend, .daily-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 1fr) minmax(8rem, 1.6fr) 3.5rem minmax(4rem, 1.5fr) 3.5rem 6.25rem;
+  align-items: center;
+  column-gap: clamp(12px, 1.7vw, 24px);
+}
+
+.daily-legend {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.daily-legend > span:first-child { grid-column: span 2; text-align: left; }
+.daily-legend > span:last-child { text-align: right; }
+.daily-row { min-height: 78px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+.daily-day { min-width: 0; overflow-wrap: anywhere; }
+.daily-day strong { display: block; font-size: 16px; font-weight: 650; }
+.daily-day > span { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
+.daily-condition { display: flex; align-items: center; gap: 10px; min-width: 0; color: #e1ecf6; font-size: 14px; line-height: 1.45; }
+.daily-condition > span { min-width: 0; overflow-wrap: anywhere; }
+.daily-low, .daily-high { font-size: 17px; font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
+.daily-low { color: var(--muted); }
+.daily-high { font-weight: 650; }
+.daily-chance { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #bde5ff; font-size: 14px; white-space: nowrap; }
+
+.daily-range {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e7f3ff30;
+}
+
+.daily-range > span {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a9d8f7, #f0d89f);
+}
+
+.daily-note { margin-top: 14px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+@media (max-width: 720px) {
+  .daily-legend { display: none; }
+  .daily-rows { border-top: 1px solid var(--line); }
+  .daily-row {
+    grid-template-columns: 3rem minmax(0, 3fr) minmax(0, 1fr) 3rem 3.75rem;
+    grid-template-areas: "day day condition condition condition" "low range range high chance";
+    gap: 9px;
+  }
+  .daily-day { grid-area: day; }
+  .daily-condition { grid-area: condition; justify-self: end; }
+  .daily-low { grid-area: low; }
+  .daily-range { grid-area: range; }
+  .daily-high { grid-area: high; }
+  .daily-chance { grid-area: chance; padding-left: 3px; }
+}

@@ -67,23 +67,6 @@
 .forecast-key { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .forecast-key p, .scroll-hint { display: flex; align-items: center; gap: 6px; }
 .scroll-hint { display: none; white-space: nowrap; }
-.daily-panel { padding: 12px 6px 3px; }
-.daily-legend, .daily-row { display: grid; grid-template-columns: 110px minmax(140px, 1.4fr) 45px minmax(80px, 1fr) 45px 95px; align-items: center; column-gap: 24px; }
-.daily-legend { color: var(--muted); font-size: 11px; text-align: center; padding: 0 0 16px; border-bottom: 1px solid var(--line); }
-.daily-legend > span:first-child { grid-column: 1 / 3; text-align: left; }
-.daily-legend > span:last-child { text-align: right; }
-.daily-row { border-bottom: 1px solid var(--line); min-height: 91px; font-size: 15px; }
-.daily-day strong { display: block; font-size: 14px; font-weight: 600; }
-.daily-day > span { display: block; font-size: 11px; color: var(--muted); margin-top: 5px; }
-.daily-condition { display: flex; align-items: center; gap: 14px; }
-.daily-condition > span { font-size: 12px; line-height: 1.6; color: #e1ecf6; }
-.daily-condition svg { color: #e3f0fc; }
-.daily-low { text-align: center; color: #d3e4f3; }
-.daily-high { text-align: center; font-weight: 600; }
-.daily-range { position: relative; height: 4px; background: #ffffff25; border-radius: 3px; overflow: hidden; }
-.daily-range > span { position: absolute; height: 100%; top: 0; border-radius: 3px; background: linear-gradient(90deg, #a9d8f7, #f0d89f); }
-.daily-chance { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: #bde5ff; font-size: 13px; }
-.daily-note { font-size: 11px; line-height: 1.7; color: var(--muted); margin-top: 14px; }
 .forecast-matte {
   --line: #c9deef2c;
   padding: 28px;
@@ -155,7 +138,6 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 900px) {
   .forecast-container { width: calc(100% - 56px); }.hero-header { inset: 25px 28px auto; }.hero-weather { left: 40px; }
-  .daily-legend, .daily-row { grid-template-columns: 90px minmax(95px,1fr) 35px minmax(45px,1fr) 35px 72px; gap: 15px; }
   .details-layout { gap: 22px; }.sun-details { padding-inline-start: 22px; }
   .detail-pair { gap: 16px; }.detail-pair > div + div { padding-left: 16px; }.detail-pair p { font-size: 26px; }.detail-pair p > span { display: block; margin-left: 0; margin-top: 2px; }
 }
@@ -182,10 +164,7 @@
   .temperature-chart { height: 116px; }
   .forecast-key { flex-wrap: wrap; justify-content: flex-start; gap: 8px 16px; font-size: 12px; }
   .forecast-key p { align-items: flex-start; }.forecast-key p svg { flex: 0 0 auto; margin-top: 2px; }.scroll-hint { display: flex; }
-  .daily-panel { padding: 4px 0 0; }.daily-legend, .daily-row { grid-template-columns: 63px 26px 28px minmax(25px,1fr) 28px 48px; column-gap: 9px; }
-  .daily-legend { font-size: 9px; padding-bottom: 12px; }.daily-condition > span { display: none; }.daily-row { min-height: 77px; font-size: 13px; }
-  .daily-day strong { font-size: 12px; }.daily-day > span { font-size: 10px; }.daily-condition svg { width: 24px; }.daily-chance { font-size: 11px; gap: 3px; }.daily-chance svg { width: 12px; }
-  .daily-note { font-size: 10px; }.forecast-matte { padding: 20px 16px; }
+  .forecast-matte { padding: 20px 16px; }
   .daily-panel + .details-layout { padding-top: 22px; margin-top: 22px; }
   .detail-pair p > span { display: inline; margin-left: 4px; }
   .detail-pair p { font-size: 28px; }.sun-arc svg { height: 145px; }.sun-arc { margin-top: -18px; }
@@ -193,7 +172,6 @@
 }
 @media (max-width: 370px) {
   .hero-weather { left: 24px; width: calc(100% - 48px); }.current-temperature { font-size: 64px; }.city-trigger { font-size: 29px; }.current-condition { font-size: 16px; }
-  .daily-legend, .daily-row { grid-template-columns: 57px 22px 25px minmax(18px,1fr) 25px 42px; gap: 6px; }.daily-legend { font-size: 8px; }
   .detail-pair { gap: 12px; }.detail-pair > div + div { padding-left: 12px; }.detail-pair p > span { display: block; margin-left: 0; }.wind-compass { width: 96px; height: 96px; }
 }
 @media (max-height: 550px) {
