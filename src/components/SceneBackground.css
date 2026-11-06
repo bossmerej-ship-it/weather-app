@@ -174,7 +174,11 @@
   .scene-landscape { background-position: 47% center; }
   .scene-cloud { width: 190%; left: -42%; }
   .scene-cloud-two { width: 220%; left: -80%; }
-  .scene-shade { background: linear-gradient(180deg, #17395d05 20%, #15375b08 45%, #12325280 100%); }
+  .scene-shade {
+    background:
+      linear-gradient(180deg, #17395d05 20%, #15375b08 45%, #12325280 100%),
+      radial-gradient(ellipse 86% 40% at 10% 74%, #0e284658, transparent 90%);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .scene-background * { animation: none !important; transition: none !important; }
