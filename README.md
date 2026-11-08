@@ -41,12 +41,13 @@
 
 ## Команды
 
-```bash
-npm test
-npm run lint
-npm run build
-npm run preview
-```
+| Команда | Назначение |
+| --- | --- |
+| `npm run dev` | Запустить сервер разработки Vite. |
+| `npm run lint` | Проверить код через Oxlint. |
+| `npm test` | Запустить тесты API, прогноза и браузерных взаимодействий. |
+| `npm run build` | Собрать приложение в `dist`. |
+| `npm run preview` | Открыть локально готовую сборку после `npm run build`. |
 
 ## Данные прогноза
 
