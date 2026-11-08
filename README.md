@@ -72,7 +72,11 @@ NEBO написан на React и Vite. Почасовой график пост
 
 Авторы фотографий и условия использования указаны в [описании ресурсов неба](public/scenes/README.md).
 
-Сборка Vercel: `npm run build`, результат `dist`, ключ задан в Production/Preview. GitHub Actions запускает lint, тесты и сборку при push/PR. Для сборки в CI ключ не нужен, для погодных запросов на сайте — нужен.
+## Публикация и CI
+
+Для Vercel в [`vercel.json`](vercel.json) задана сборка `npm run build` с выходным каталогом `dist`. Укажите `VITE_WEATHER_API_KEY` в настройках окружений Production и Preview, где должен загружаться прогноз.
+
+[GitHub Actions](.github/workflows/ci.yml) на Node.js 24 проверяет пул-реквесты и изменения в `main`: устанавливает зависимости, запускает линтер, тесты и сборку.
 
 ## English quick start
 
