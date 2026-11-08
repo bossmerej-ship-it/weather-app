@@ -80,16 +80,11 @@ NEBO написан на React и Vite. Почасовой график пост
 
 ## English quick start
 
-NEBO shows current conditions, hourly weather, and a three-day forecast. Select the city name to search for another location or use browser geolocation.
+NEBO shows current conditions, an hourly temperature chart and a three-day forecast. [Open the live app](https://weather-app-sage-six-68.vercel.app/).
 
-### Requirements
+Use Git, Node.js 24.15 or newer within 24.x, npm and a [WeatherAPI key](https://www.weatherapi.com/).
 
-- Node.js 22.12 or newer and npm
-- A [WeatherAPI](https://www.weatherapi.com/) key
-
-### Run locally
-
-1. Clone the repository and install the locked dependencies.
+1. Clone the repository and install dependencies.
 
    ```bash
    git clone https://github.com/bossmerej-ship-it/weather-app.git
@@ -97,29 +92,7 @@ NEBO shows current conditions, hourly weather, and a three-day forecast. Select 
    npm ci
    ```
 
-2. Copy `.env.example` to `.env.local` in the project root and set your key.
+2. Copy [`.env.example`](.env.example) to `.env.local` and set `VITE_WEATHER_API_KEY` to your key. Vite includes variables prefixed with `VITE_` in the browser bundle.
+3. Run `npm run dev` and open the URL printed by Vite. NEBO starts with Astana selected. Click the city name to search for another location.
 
-   ```dotenv
-   VITE_WEATHER_API_KEY=your_weatherapi_key
-   ```
-
-   Restart the development server after changing `.env.local`. Vite includes variables prefixed with `VITE_` in the browser bundle. Use a dedicated key with appropriate restrictions and a quota.
-
-3. Start the development server.
-
-   ```bash
-   npm run dev
-   ```
-
-   Open the local URL printed by Vite. NEBO opens with Astana selected. Browser geolocation requires HTTPS or `localhost`.
-
-### Check and build
-
-```bash
-npm test
-npm run lint
-npm run build
-npm run preview
-```
-
-The production build is written to `dist`. For Vercel, set `VITE_WEATHER_API_KEY` in the project's environment settings.
+Run `npm run lint`, `npm test` and `npm run build` to check your changes. The production build goes to `dist`.
