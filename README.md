@@ -2,7 +2,7 @@
 
 Текущая погода, почасовой график и прогноз на три дня. Интерактивное небо меняется вместе с погодой и временем суток в выбранном городе.
 
-[Открыть NEBO](https://weather-app-sage-six-68.vercel.app/) · [Быстрый запуск](#быстрый-запуск) · [English quick start](#english-quick-start)
+[Открыть NEBO](https://weather-app-sage-six-68.vercel.app/) · [Демо](#демо) · [Быстрый запуск](#быстрый-запуск) · [English quick start](#english-quick-start)
 
 ## Демо
 
