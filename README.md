@@ -96,6 +96,8 @@ NEBO использует React и собирается с помощью Vite. 
 
 NEBO shows current conditions, an hourly temperature chart and a three-day forecast. [Open the live app](https://weather-app-sage-six-68.vercel.app/).
 
+[Watch the 9-second demo](#демо) to see the sky update when you change cities and open the hourly forecast.
+
 Use Git, Node.js 24.15 or newer within 24.x, npm and a [WeatherAPI key](https://www.weatherapi.com/).
 
 1. Clone the repository and install dependencies.
