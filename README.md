@@ -11,7 +11,10 @@
 <details open>
 <summary>Демо NEBO · 9 секунд</summary>
 
-![Смена солнечного Финикса на дождливую Астану и открытие почасового прогноза](docs/demo/nebo-demo.gif)
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="docs/demo/nebo-demo-cover.jpg">
+  <img src="docs/demo/nebo-demo.gif" alt="NEBO: погода в Финиксе, выбор Астаны и почасовой прогноз">
+</picture>
 
 </details>
 
