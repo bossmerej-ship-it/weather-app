@@ -41,6 +41,10 @@ export default function App() {
   }
   function search(query) { geo.cancel(); return loadAndClose(query); }
   function locate() { geo.locate(loadAndClose); }
+  function closeSearch() {
+    geo.cancel();
+    setSearchOpen(false);
+  }
   async function retryAndClose() {
     if (geo.error) { locate(); return; }
     const result = await retry();
@@ -103,6 +107,6 @@ export default function App() {
         </div>
       </div>
     </main>
-    <CitySearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} onSearch={search} onGeolocation={locate} loading={loading} locating={geo.locating} activeCity={weather?.location.name} feedback={feedback} onRetry={retryAndClose} />
+    <CitySearchDialog open={searchOpen} onClose={closeSearch} onSearch={search} onGeolocation={locate} loading={loading} locating={geo.locating} activeCity={weather?.location.name} feedback={feedback} onRetry={retryAndClose} />
   </div>;
 }
