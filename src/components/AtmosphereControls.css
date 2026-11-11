@@ -59,3 +59,6 @@
 @media (prefers-reduced-motion: reduce) {
   .appearance-switch, .appearance-switch > span, .appearance-scene { transition: none; }
 }
+@media (forced-colors: active) {
+  .appearance-scene[aria-pressed="true"] { border: 2px solid Highlight; }
+}
