@@ -9,9 +9,17 @@ const QUICK_CITIES = [
   { label: 'Токио', query: 'Tokyo', aliases: ['Tokyo', 'Токио'] },
 ];
 
+function isBackdropEvent(event) {
+  if (event.target !== event.currentTarget) return false;
+  const bounds = event.currentTarget.getBoundingClientRect();
+  return event.clientX < bounds.left || event.clientX > bounds.right ||
+    event.clientY < bounds.top || event.clientY > bounds.bottom;
+}
+
 export function CitySearchDialog({ open, onClose, onSearch, onGeolocation, loading, locating, activeCity, feedback, onRetry }) {
   const dialog = useRef(null);
   const input = useRef(null);
+  const pressedBackdrop = useRef(false);
   const titleId = useId();
   const hintId = useId();
   const validationId = useId();
@@ -57,14 +65,16 @@ export function CitySearchDialog({ open, onClose, onSearch, onGeolocation, loadi
   }
 
   function backdropClick(event) {
-    if (event.target !== event.currentTarget) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) onClose();
+    const shouldClose = pressedBackdrop.current && isBackdropEvent(event);
+    pressedBackdrop.current = false;
+    if (shouldClose) onClose();
   }
 
   return <dialog ref={dialog} className="city-dialog" aria-labelledby={titleId} aria-describedby={hintId}
     onCancel={(event) => { event.preventDefault(); onClose(); }}
-    onClose={() => { if (!dialog.current?.open) onClose(); }} onClick={backdropClick}>
+    onClose={() => { if (!dialog.current?.open) onClose(); }}
+    onPointerDown={(event) => { pressedBackdrop.current = event.button === 0 && isBackdropEvent(event); }}
+    onPointerCancel={() => { pressedBackdrop.current = false; }} onClick={backdropClick}>
     <div className="city-dialog-heading">
       <div><h2 id={titleId}>Выбрать город</h2><p id={hintId}>Найдите город или используйте своё местоположение.</p></div>
       <button type="button" className="city-dialog-close" onClick={onClose} aria-label="Закрыть поиск"><X size={21} aria-hidden="true" /></button>
