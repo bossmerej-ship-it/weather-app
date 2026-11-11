@@ -8,6 +8,8 @@ export function CurrentWeather({ weather, unit, onChooseCity, loading }) {
   const [now, setNow] = useState(() => new Date());
   useEffect(() => { const interval = setInterval(() => setNow(new Date()), 30000); return () => clearInterval(interval); }, []);
   const clock = location.tz_id ? locationClock(location.tz_id, now) : null;
+  const reading = temperature(current.temp_c, unit);
+  const unitLabel = '°' + unit.toUpperCase();
   const kind = getWeatherKind(current.condition.code);
   const icon = [1006, 1009].includes(current.condition.code) ? 'overcast' : current.is_day === 0 && kind === 'clear' ? 'night' : current.is_day === 0 && kind === 'clouds' ? 'night-clouds' : kind;
   return <section className={'current-weather ' + (loading ? 'current-updating' : '')} aria-labelledby="city-title" aria-busy={loading}>
@@ -17,11 +19,11 @@ export function CurrentWeather({ weather, unit, onChooseCity, loading }) {
     </button></h1>
     <div className="current-data" key={location.name + ':' + location.lat + ':' + location.lon}>
       <div className="current-reading">
-        <p className="current-temperature" aria-label={'Температура ' + temperature(current.temp_c, unit) + ' по шкале ' + (unit === 'c' ? 'Цельсия' : 'Фаренгейта')}>{temperature(current.temp_c, unit)}<span>°{unit.toUpperCase()}</span></p>
+        <p className="current-temperature" aria-label={'Температура ' + reading + ' по шкале ' + (unit === 'c' ? 'Цельсия' : 'Фаренгейта')}>{reading}<span>{unitLabel}</span></p>
         <WeatherIcon kind={icon} size={39} />
       </div>
       <p className="current-condition">{current.condition.text}</p>
-      <p className="current-feels">Ощущается как {temperature(current.feelslike_c, unit)}°</p>
+      <p className="current-feels">Ощущается как {temperature(current.feelslike_c, unit)}{unitLabel}</p>
     </div>
   </section>;
 }
