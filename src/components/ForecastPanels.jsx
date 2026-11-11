@@ -58,7 +58,7 @@ export function DailyForecast({ weather, unit }) {
   if (!days.length) return null;
   const low = Math.min(...days.map(day => day.day.mintemp_c));
   const high = Math.max(...days.map(day => day.day.maxtemp_c));
-  const range = high - low || 1;
+  const range = high - low;
 
   return <section className="daily-panel" aria-labelledby="daily-title">
     <div className="section-heading"><h2 id="daily-title">По дням</h2><span>Дней: {days.length} · °{unit.toUpperCase()}</span></div>
@@ -71,6 +71,8 @@ export function DailyForecast({ weather, unit }) {
       const chance = precipitationChance(day.day, true);
       const snow = precipitationType(day.day, true) === 'snow';
       const PrecipitationIcon = snow ? Snowflake : Droplets;
+      const rangeStart = range ? (mintemp_c - low) / range * 100 : 50;
+      const rangeWidth = range ? (maxtemp_c - mintemp_c) / range * 100 : 0;
       return <div className="daily-row" data-weather-kind={kind} key={day.date}>
         <div className="daily-day">
           <strong>{forecastDayLabel(day, weather)}</strong>
@@ -82,7 +84,10 @@ export function DailyForecast({ weather, unit }) {
         </div>
         <span className="daily-low"><span className="sr-only">Минимум </span>{temperature(mintemp_c, unit)}°</span>
         <div className="daily-range" aria-hidden="true">
-          <span style={{ left: `${(mintemp_c - low) / range * 100}%`, width: `${(maxtemp_c - mintemp_c) / range * 100}%` }} />
+          <span
+            data-single-temperature={mintemp_c === maxtemp_c || undefined}
+            style={{ '--range-start': `${rangeStart}%`, '--range-width': `${rangeWidth}%` }}
+          />
         </div>
         <strong className="daily-high"><span className="sr-only">Максимум </span>{temperature(maxtemp_c, unit)}°</strong>
         <span className="daily-chance" data-precipitation={chance > 0 ? 'possible' : undefined}>

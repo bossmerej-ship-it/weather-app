@@ -47,9 +47,17 @@
 .daily-range > span {
   position: absolute;
   top: 0;
+  left: var(--range-start);
+  width: var(--range-width);
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, color-mix(in srgb, var(--day-range-accent) 62%, var(--matte-surface)), var(--day-range-accent));
+}
+
+.daily-range > [data-single-temperature] {
+  left: clamp(0px, calc(var(--range-start) - 2px), calc(100% - 4px));
+  width: 4px;
+  background: var(--day-range-accent);
 }
 
 .daily-note { margin-top: 14px; color: var(--muted); font-size: 13px; line-height: 1.6; }
