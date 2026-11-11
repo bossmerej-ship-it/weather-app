@@ -20,19 +20,18 @@ async function requestEndpoint(endpoint, query, { apiKey, signal, fetcher = fetc
   if (!normalized) throw new WeatherRequestError('empty', 'Введите название города.');
   if (!apiKey || apiKey === 'your_weatherapi_key') throw mapWeatherError(1002);
 
+  signal?.throwIfAborted();
   const params = new URLSearchParams({ key: apiKey, q: normalized, lang: 'ru', ...parameters });
   let response;
-  try {
-    response = await fetcher(`https://api.weatherapi.com/v1/${endpoint}.json?${params}`, { signal });
-  } catch (error) {
-    if (error.name === 'AbortError' || signal?.aborted) throw error;
-    throw mapWeatherError();
-  }
   let data;
   try {
+    response = await fetcher(`https://api.weatherapi.com/v1/${endpoint}.json?${params}`, { signal });
+    signal?.throwIfAborted();
     data = await response.json();
+    signal?.throwIfAborted();
   } catch (error) {
-    if (error.name === 'AbortError' || signal?.aborted) throw error;
+    signal?.throwIfAborted();
+    if (error?.name === 'AbortError') throw error;
     throw mapWeatherError();
   }
   if (!response.ok || data?.error) throw mapWeatherError(data?.error?.code);

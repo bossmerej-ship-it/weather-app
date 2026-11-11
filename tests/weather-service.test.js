@@ -47,9 +47,33 @@ test('malformed and non-JSON responses never become weather data', async () => {
 
 test('network failures are actionable and cancellation remains cancellation', async () => {
   await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher: async () => { throw new TypeError('Failed to fetch'); } }), { code: 'unavailable' });
+  await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher: async () => { throw new DOMException('Cancelled', 'AbortError'); } }), { name: 'AbortError' });
+});
+
+test('a cancelled weather request never starts another network operation', async () => {
   const controller = new AbortController();
   controller.abort();
-  await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', signal: controller.signal, fetcher: async (_, { signal }) => { signal.throwIfAborted(); } }), { name: 'AbortError' });
+  let calls = 0;
+  const fetcher = async () => { calls += 1; return response(data); };
+  await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', signal: controller.signal, fetcher }), { name: 'AbortError' });
+  assert.equal(calls, 0);
+});
+
+test('a forecast cancelled while reading JSON cannot be returned or retried', async () => {
+  const controller = new AbortController();
+  let calls = 0;
+  const fetcher = async () => {
+    calls += 1;
+    return {
+      ok: true,
+      async json() {
+        controller.abort();
+        return forecast;
+      },
+    };
+  };
+  await assert.rejects(requestDashboardWeather('Astana', { apiKey: 'test-key', signal: controller.signal, fetcher }), { name: 'AbortError' });
+  assert.equal(calls, 1);
 });
 
 const forecast = {
