@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { dailyData, forecastDayLabel, formatForecastTime, precipitationChance, precipitationType, time24, todaySun, upcomingHours, weatherObservation } from '../src/lib/forecast.js';
+import { dailyData, forecastDayLabel, forecastHourStart, formatForecastTime, precipitationChance, precipitationType, time24, todaySun, upcomingHours, weatherObservation } from '../src/lib/forecast.js';
 
 const condition = { code: 1000, text: 'Ясно' };
 const hour = (time, temp_c, offset = '+05:00', extra = {}) => ({ time, time_epoch: Date.parse(`${time.replace(' ', 'T')}:00${offset}`) / 1000, temp_c, condition, ...extra });
@@ -26,8 +26,17 @@ test('quarter-hour timezones retain the current hour instead of flooring a UTC h
 test('hour selection falls back only to a reported current epoch and never to the browser clock', () => {
   const payload = { current: { last_updated_epoch: Date.parse('2026-11-03T20:15:00+05:00') / 1000, last_updated: '2026-11-03 20:15' }, forecast: { forecastday: [day('2026-11-03', [hour('2026-11-03 20:00', 1)])] } };
   assert.equal(upcomingHours(payload).length, 1);
+  assert.equal(forecastHourStart(payload), payload.forecast.forecastday[0].hour[0].time_epoch);
+  assert.equal(forecastHourStart({ location: { localtime_epoch: payload.current.last_updated_epoch } }), forecastHourStart(payload));
   assert.deepEqual(upcomingHours({ forecast: payload.forecast }), []);
   assert.deepEqual(upcomingHours(null), []);
+});
+
+test('a repeated local time during a clock change identifies only one current hour', () => {
+  const current = hour('2026-11-01 01:00', 1, '-04:00');
+  const repeated = hour('2026-11-01 01:00', 0, '-05:00');
+  const payload = weather([day('2026-11-01', [current, repeated])], '2026-11-01 01:15', '-04:00');
+  assert.deepEqual(upcomingHours(payload).filter(item => item.time_epoch === forecastHourStart(payload)), [current]);
 });
 
 test('invalid days, malformed hours and duplicate timestamps do not pollute forecast displays', () => {

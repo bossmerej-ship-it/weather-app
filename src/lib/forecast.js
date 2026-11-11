@@ -20,14 +20,20 @@ export function formatForecastTime(value) {
   return match && Number(match[1]) < 24 && Number(match[2]) < 60 ? `${match[1]}:${match[2]}` : null;
 }
 
-/** Select by the API's epoch and local minute, including half-hour/quarter-hour timezones. */
-export function upcomingHours(weather, count = 8) {
+/** Use the API's epoch and local minute, including half-hour/quarter-hour timezones. */
+export function forecastHourStart(weather) {
   const fromLocation = Number.isFinite(weather?.location?.localtime_epoch);
   const epoch = fromLocation ? weather.location.localtime_epoch : weather?.current?.last_updated_epoch;
-  if (!Number.isFinite(epoch) || !Number.isFinite(count) || count < 1) return [];
+  if (!Number.isFinite(epoch)) return null;
   const wallTime = formatForecastTime(fromLocation ? weather.location.localtime : weather.current?.last_updated);
   const minute = wallTime ? Number(wallTime.slice(3)) : 0;
-  const hourStart = wallTime ? epoch - minute * 60 - epoch % 60 : Math.floor(epoch / 3600) * 3600;
+  return wallTime ? epoch - minute * 60 - epoch % 60 : Math.floor(epoch / 3600) * 3600;
+}
+
+export function upcomingHours(weather, count = 8) {
+  if (!Number.isFinite(count) || count < 1) return [];
+  const hourStart = forecastHourStart(weather);
+  if (hourStart === null) return [];
   const unique = new Map();
   for (const day of dailyData(weather)) {
     for (const hour of Array.isArray(day.hour) ? day.hour : []) {
