@@ -89,7 +89,10 @@ export default function App() {
             <div className="forecast-tools"><button type="button" className="change-city" onClick={() => setSearchOpen(true)}>Другой город<ChevronDown size={15} /></button>
               <div className="unit-switch" role="group" aria-label="Единицы температуры">{['c','f'].map(value => <button key={value} type="button" onClick={() => setUnit(value)} aria-pressed={unit === value} aria-label={value === 'c' ? 'Градусы Цельсия' : 'Градусы Фаренгейта'}>°{value.toUpperCase()}</button>)}</div>
             </div></div></Reveal>
-          {forecastUnavailable && <div className="forecast-unavailable" role="status">Прогноз пока недоступен. Текущая погода показана выше.<button onClick={retryAndClose} type="button">Повторить</button></div>}
+          {forecastUnavailable && <div className="forecast-unavailable">
+            <span role="status">Прогноз пока недоступен. Текущая погода показана выше.</span>
+            <button onClick={retryAndClose} type="button" disabled={loading}>Повторить</button>
+          </div>}
           {weather && <div className="forecast-content" aria-busy={loading}>
             <Reveal motion={motion}><HourlyForecast weather={weather} unit={unit} motion={motion} /></Reveal>
             <Reveal motion={motion}>
