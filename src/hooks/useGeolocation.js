@@ -15,22 +15,29 @@ export function useGeolocation() {
   function locate(onSuccess) {
     const id = ++generation.current;
     setError(null);
-    if (!navigator.geolocation) {
+    const provider = navigator.geolocation;
+    if (!provider) {
+      setLocating(false);
       setError({ code: 'location', message: 'В этом браузере геолокация недоступна. Найдите город через поиск.' });
       return;
     }
     setLocating(true);
-    navigator.geolocation.getCurrentPosition((position) => {
+    function reportFailure(failure) {
       if (id !== generation.current) return;
       setLocating(false);
-      onSuccess(`${position.coords.latitude},${position.coords.longitude}`);
-    }, (failure) => {
-      if (id !== generation.current) return;
-      setLocating(false);
-      setError({ code: 'location', message: failure.code === 1
+      setError({ code: 'location', message: failure?.code === 1 || failure?.name === 'SecurityError'
         ? 'Нет доступа к местоположению. Разрешите его в браузере или найдите город через поиск.'
         : 'Не удалось определить местоположение. Попробуйте ещё раз или найдите город через поиск.' });
-    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+    }
+    try {
+      provider.getCurrentPosition((position) => {
+        if (id !== generation.current) return;
+        setLocating(false);
+        onSuccess(`${position.coords.latitude},${position.coords.longitude}`);
+      }, reportFailure, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+    } catch (error) {
+      reportFailure(error);
+    }
   }
 
   return { locating, error, locate, cancel };

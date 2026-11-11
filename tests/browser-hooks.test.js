@@ -128,6 +128,28 @@ test('a location timeout stops the pending state and offers retry or search', ()
   assert.match(result.current.error.message, /Попробуйте ещё раз/);
 });
 
+test('a geolocation call blocked during setup can recover and be retried', () => {
+  setGeolocation({
+    getCurrentPosition() { throw new DOMException('PRIVATE DEVICE DETAIL', 'SecurityError'); },
+  });
+  const { result } = renderHook(() => useGeolocation());
+  const received = [];
+  const loadWeather = (coordinates) => received.push(coordinates);
+
+  act(() => result.current.locate(loadWeather));
+  assert.equal(result.current.locating, false);
+  assert.equal(result.current.error.code, 'location');
+  assert.match(result.current.error.message, /Нет доступа/);
+  assert.ok(!result.current.error.message.includes('PRIVATE'));
+  assert.deepEqual(received, []);
+
+  const calls = locationProvider();
+  act(() => result.current.locate(loadWeather));
+  act(() => calls[0].success({ coords: { latitude: 0, longitude: 0 } }));
+  assert.deepEqual(received, ['0,0']);
+  assert.equal(result.current.error, null);
+});
+
 test('cancelled location callbacks cannot replace a newer city or create an error', () => {
   const calls = locationProvider();
   const received = [];
