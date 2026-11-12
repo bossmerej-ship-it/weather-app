@@ -61,4 +61,5 @@
 }
 @media (forced-colors: active) {
   .appearance-scene[aria-pressed="true"] { border: 2px solid Highlight; }
+  .appearance-switch > span { border: 1px solid ButtonText; }
 }
