@@ -1,4 +1,4 @@
-import { temperature } from './weather.js';
+import { locationClock, temperature } from './weather.js';
 
 const validChance = (value) => Number.isFinite(value) && value >= 0 && value <= 100;
 const validCondition = (condition) => Number.isFinite(condition?.code) && typeof condition?.text === 'string' && condition.text.length > 0;
@@ -16,8 +16,8 @@ export function dailyData(weather) {
 
 export function formatForecastTime(value) {
   const time = typeof value === 'string' ? value : value?.time;
-  const match = typeof time === 'string' && time.match(/(?:^|[ T])(\d{2}):(\d{2})(?::\d{2})?$/);
-  return match && Number(match[1]) < 24 && Number(match[2]) < 60 ? `${match[1]}:${match[2]}` : null;
+  const match = typeof time === 'string' && time.trim().match(/(?:^|[ T])(\d{1,2}):([0-5]\d)(?::[0-5]\d)?$/);
+  return match && Number(match[1]) < 24 ? `${match[1].padStart(2, '0')}:${match[2]}` : null;
 }
 
 /** Use the API's epoch and local minute, including half-hour/quarter-hour timezones. */
@@ -25,7 +25,10 @@ export function forecastHourStart(weather) {
   const fromLocation = Number.isFinite(weather?.location?.localtime_epoch);
   const epoch = fromLocation ? weather.location.localtime_epoch : weather?.current?.last_updated_epoch;
   if (!Number.isFinite(epoch)) return null;
-  const wallTime = formatForecastTime(fromLocation ? weather.location.localtime : weather.current?.last_updated);
+  const timeZone = weather?.location?.tz_id;
+  const reportedTime = fromLocation ? weather.location.localtime : weather.current?.last_updated;
+  const wallTime = formatForecastTime(reportedTime) ??
+    (timeZone ? locationClock(timeZone, new Date(epoch * 1000))?.time : null);
   const minute = wallTime ? Number(wallTime.slice(3)) : 0;
   return wallTime ? epoch - minute * 60 - epoch % 60 : Math.floor(epoch / 3600) * 3600;
 }

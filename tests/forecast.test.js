@@ -23,6 +23,23 @@ test('quarter-hour timezones retain the current hour instead of flooring a UTC h
   assert.deepEqual(upcomingHours(payload).map((item) => formatForecastTime(item)), ['17:00', '18:00']);
 });
 
+test('an unpadded local hour is accepted and labels still use two digits', () => {
+  const current = hour('2026-11-03 08:00', 1, '+05:45', { time: '2026-11-03 8:00' });
+  const payload = weather([day('2026-11-03', [current])], '2026-11-03 08:57', '+05:45');
+  payload.location.localtime = '2026-11-03 8:57';
+  assert.equal(forecastHourStart(payload), current.time_epoch);
+  assert.deepEqual(upcomingHours(payload).map(formatForecastTime), ['08:00']);
+});
+
+test('missing wall time uses the reported timezone to identify the current hour', () => {
+  const current = hour('2026-11-03 08:00', 1, '+05:30');
+  const payload = weather([day('2026-11-03', [current])], '2026-11-03 08:55', '+05:30');
+  payload.location.tz_id = 'Asia/Kolkata';
+  delete payload.location.localtime;
+  assert.equal(forecastHourStart(payload), current.time_epoch);
+  assert.deepEqual(upcomingHours(payload), [current]);
+});
+
 test('hour selection falls back only to a reported current epoch and never to the browser clock', () => {
   const payload = { current: { last_updated_epoch: Date.parse('2026-11-03T20:15:00+05:00') / 1000, last_updated: '2026-11-03 20:15' }, forecast: { forecastday: [day('2026-11-03', [hour('2026-11-03 20:00', 1)])] } };
   assert.equal(upcomingHours(payload).length, 1);
