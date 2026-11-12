@@ -83,9 +83,9 @@ export default function App() {
         </div>
         <a className="forecast-cue" href="#forecast" onClick={goToForecast} aria-label="Перейти к прогнозу"><ArrowDown size={20} aria-hidden="true" /></a>
       </section>
-      <div className="forecast-shell" id="forecast" tabIndex={-1}>
+      <section className="forecast-shell" id="forecast" aria-labelledby="forecast-label" tabIndex={-1}>
         <div className="forecast-container">
-          <Reveal motion={motion}><div className="forecast-intro"><div><p className="eyebrow">Прогноз</p><h2>{weather ? cityName(weather.location.name) : 'Погода по часам и дням'}</h2>{observation && <p className="forecast-observation">{observation}</p>}</div>
+          <Reveal motion={motion}><div className="forecast-intro"><div><p id="forecast-label" className="eyebrow">Прогноз</p><h2>{weather ? cityName(weather.location.name) : 'Погода по часам и дням'}</h2>{observation && <p className="forecast-observation">{observation}</p>}</div>
             <div className="forecast-tools"><button type="button" className="change-city" onClick={() => setSearchOpen(true)}>Другой город<ChevronDown size={15} /></button>
               <div className="unit-switch" role="group" aria-label="Единицы температуры">{['c','f'].map(value => <button key={value} type="button" onClick={() => setUnit(value)} aria-pressed={unit === value} aria-label={value === 'c' ? 'Градусы Цельсия' : 'Градусы Фаренгейта'}>°{value.toUpperCase()}</button>)}</div>
             </div></div></Reveal>
@@ -108,7 +108,7 @@ export default function App() {
           <Reveal motion={motion}><AtmosphereControls selected={selected} setSelected={setSelected} paused={paused} setPaused={setPaused} reducedMotion={reducedMotion} /></Reveal>
           <footer className="site-footer"><span>NEBO</span><p>Погода по местному времени города.</p><a href="https://github.com/bossmerej-ship-it/weather-app" target="_blank" rel="noreferrer">GitHub<ArrowUpRight size={14} aria-hidden="true" /></a></footer>
         </div>
-      </div>
+      </section>
     </main>
     <CitySearchDialog open={searchOpen} onClose={closeSearch} onSearch={search} onGeolocation={locate} loading={loading} locating={geo.locating} activeCity={weather?.location.name} feedback={feedback} onRetry={retryAndClose} />
   </div>;
