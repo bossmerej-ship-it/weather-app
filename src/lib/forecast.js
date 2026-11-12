@@ -76,16 +76,21 @@ export function todaySun(weather) {
   const today = dailyData(weather).find((day) => day.date === date);
   const sunrise = time24(today?.astro?.sunrise);
   const sunset = time24(today?.astro?.sunset);
-  const localTime = formatForecastTime(weather?.location?.localtime);
-  if (!sunrise || !sunset || !localTime) return null;
+  if (!sunrise && !sunset) return null;
+  const times = { sunrise, sunset };
+  if (!sunrise || !sunset) return times;
+
   const sunriseMinutes = minutes(sunrise);
   const sunsetMinutes = minutes(sunset);
+  if (sunsetMinutes <= sunriseMinutes) return times;
+  const daylightMinutes = sunsetMinutes - sunriseMinutes;
+  const localTime = formatForecastTime(weather?.location?.localtime);
+  if (!localTime) return { ...times, daylightMinutes };
+
   const localMinutes = minutes(localTime);
-  if (sunsetMinutes <= sunriseMinutes) return null;
   return {
-    sunrise, sunset, sunriseMinutes, sunsetMinutes, localMinutes,
-    daylightMinutes: sunsetMinutes - sunriseMinutes,
-    progress: Math.max(0, Math.min(1, (localMinutes - sunriseMinutes) / (sunsetMinutes - sunriseMinutes))),
+    ...times, sunriseMinutes, sunsetMinutes, localMinutes, daylightMinutes,
+    progress: Math.max(0, Math.min(1, (localMinutes - sunriseMinutes) / daylightMinutes)),
     isDaylight: localMinutes >= sunriseMinutes && localMinutes < sunsetMinutes,
   };
 }

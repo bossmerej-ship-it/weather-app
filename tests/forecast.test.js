@@ -87,8 +87,20 @@ test('astronomy handles noon/midnight and does not invent polar sun times', () =
   payload.location.localtime = '2026-11-03 22:00';
   assert.equal(todaySun(payload).progress, 1);
   assert.equal(todaySun(payload).isDaylight, false);
-  payload.forecast.forecastday[0].astro.sunrise = 'Does not rise today';
+  payload.forecast.forecastday[0].astro = { sunrise: 'Does not rise today', sunset: 'Does not set today' };
   assert.equal(todaySun(payload), null);
+});
+
+test('astronomy preserves individual event times without inventing daylight duration', () => {
+  const payload = weather([day('2026-11-03', [], { astro: { sunrise: 'Does not rise today', sunset: '06:00 PM' } })]);
+  const astro = payload.forecast.forecastday[0].astro;
+  assert.deepEqual(todaySun(payload), { sunrise: null, sunset: '18:00' });
+  astro.sunrise = '06:00 AM';
+  astro.sunset = 'Does not set today';
+  assert.deepEqual(todaySun(payload), { sunrise: '06:00', sunset: null });
+  astro.sunset = '06:00 PM';
+  payload.location.localtime = '2026-11-03';
+  assert.deepEqual(todaySun(payload), { sunrise: '06:00', sunset: '18:00', daylightMinutes: 720 });
 });
 
 test('day names compare the forecast city date rather than the device date', () => {
