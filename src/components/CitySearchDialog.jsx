@@ -109,7 +109,7 @@ export function CitySearchDialog({ open, onClose, onSearch, onGeolocation, loadi
 
     {(loading || locating) && <p className="city-dialog-pending" role="status">{locating ? 'Ожидаем местоположение.' : 'Загружаем погоду…'}</p>}
     {feedback && <div className="city-dialog-feedback" role="alert"><p>{feedback.message}</p>
-      {onRetry && <button type="button" onClick={onRetry}>Попробовать снова</button>}
+      {onRetry && feedback.code !== 'not-found' && <button type="button" onClick={onRetry}>Попробовать снова</button>}
     </div>}
   </dialog>;
 }
