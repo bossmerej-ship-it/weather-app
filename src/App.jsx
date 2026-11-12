@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { ArrowDown, ArrowUpRight, ChevronDown, LoaderCircle } from 'lucide-react';
 import { AtmosphereControls } from './components/AtmosphereControls';
 import { CurrentWeather } from './components/CurrentWeather';
@@ -60,6 +60,13 @@ export default function App() {
     target.scrollIntoView({ behavior: motion ? 'smooth' : 'auto', block: 'start' });
     target.focus({ preventScroll: true });
   }
+
+  useLayoutEffect(() => {
+    // The browser can resolve the fragment before React mounts the forecast.
+    if (window.location.hash === '#forecast' && window.scrollY === 0) {
+      document.getElementById('forecast')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
+  }, []);
 
   useEffect(() => {
     document.title = weather ? cityName(weather.location.name) + ' ' + temperature(weather.current.temp_c, unit) + '°' + unit.toUpperCase() + ' — NEBO' : 'NEBO — погода по часам и дням';
