@@ -105,6 +105,28 @@ test('unsupported geolocation offers city search without calling a location serv
   assert.match(result.current.error.message, /поиск/);
 });
 
+test('invalid geolocation coordinates offer retry and never become a weather query', () => {
+  const calls = locationProvider();
+  const received = [];
+  const { result } = renderHook(() => useGeolocation());
+  const onSuccess = coordinates => received.push(coordinates);
+  const invalidPositions = [{}, { coords: { latitude: NaN, longitude: 0 } },
+    { coords: { latitude: -91, longitude: 0 } }, { coords: { latitude: 0, longitude: 181 } }];
+
+  for (const position of invalidPositions) {
+    act(() => result.current.locate(onSuccess));
+    act(() => calls.at(-1).success(position));
+    assert.equal(result.current.locating, false);
+    assert.equal(result.current.error.code, 'location');
+  }
+  assert.deepEqual(received, []);
+
+  act(() => result.current.locate(onSuccess));
+  act(() => calls.at(-1).success({ coords: { latitude: -90, longitude: 180 } }));
+  assert.deepEqual(received, ['-90,180']);
+  assert.equal(result.current.error, null);
+});
+
 test('permission refusal becomes actionable Russian copy and can be cleared', () => {
   const calls = locationProvider();
   const { result } = renderHook(() => useGeolocation());

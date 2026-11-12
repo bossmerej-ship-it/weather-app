@@ -32,8 +32,14 @@ export function useGeolocation() {
     try {
       provider.getCurrentPosition((position) => {
         if (id !== generation.current) return;
+        const { latitude, longitude } = position?.coords ?? {};
+        if (!Number.isFinite(latitude) || Math.abs(latitude) > 90 ||
+            !Number.isFinite(longitude) || Math.abs(longitude) > 180) {
+          reportFailure();
+          return;
+        }
         setLocating(false);
-        onSuccess(`${position.coords.latitude},${position.coords.longitude}`);
+        onSuccess(`${latitude},${longitude}`);
       }, reportFailure, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
     } catch (error) {
       reportFailure(error);
