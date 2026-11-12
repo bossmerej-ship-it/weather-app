@@ -16,6 +16,8 @@ export function mapWeatherError(code) {
   return new WeatherRequestError('unavailable', 'Не удалось загрузить погоду. Проверьте подключение и попробуйте ещё раз.');
 }
 
+const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
+
 async function requestEndpoint(endpoint, query, { apiKey, signal, fetcher = fetch, parameters = {} } = {}) {
   const normalized = query.trim();
   if (!normalized) throw new WeatherRequestError('empty', 'Введите название города.');
@@ -37,7 +39,7 @@ async function requestEndpoint(endpoint, query, { apiKey, signal, fetcher = fetc
   }
   if (!response.ok || data?.error) throw mapWeatherError(data?.error?.code);
   const { current, location } = data || {};
-  if (!location?.name || !location?.country || !current?.condition?.text ||
+  if (!hasText(location?.name) || !hasText(location?.country) || !hasText(current?.condition?.text) ||
       ![current.temp_c, current.feelslike_c, current.humidity, current.wind_kph, current.pressure_mb, current.condition.code].every(Number.isFinite)) {
     throw mapWeatherError();
   }

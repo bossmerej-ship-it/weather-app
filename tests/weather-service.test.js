@@ -45,6 +45,18 @@ test('malformed and non-JSON responses never become weather data', async () => {
   await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher: async () => new Response('<html>server error</html>', { status: 502 }) }), { code: 'unavailable' });
 });
 
+test('invalid display strings are rejected before they reach the dashboard', async () => {
+  const invalidPayloads = [
+    { ...data, location: { ...data.location, name: '  ' } },
+    { ...data, location: { ...data.location, country: { label: 'Kazakhstan' } } },
+    { ...data, current: { ...data.current, condition: { ...data.current.condition, text: ['Солнечно'] } } },
+  ];
+  for (const payload of invalidPayloads) {
+    const fetcher = async () => response(payload);
+    await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher }), { code: 'unavailable' });
+  }
+});
+
 test('network failures are actionable and cancellation remains cancellation', async () => {
   await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher: async () => { throw new TypeError('Failed to fetch'); } }), { code: 'unavailable' });
   await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher: async () => { throw new DOMException('Cancelled', 'AbortError'); } }), { name: 'AbortError' });
