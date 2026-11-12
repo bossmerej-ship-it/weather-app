@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cityName, getWeatherKind, getWeatherScene, locationClock, pressureInMm, temperature, windDirection } from '../src/lib/weather.js';
+import { cityName, countryName, getWeatherKind, getWeatherScene, locationClock, pressureInMm, temperature, windDirection } from '../src/lib/weather.js';
 
 test('weather groups cover freezing rain, sleet, thunderstorms and fog', () => {
   assert.equal(getWeatherKind(1000), 'clear');
@@ -46,6 +46,12 @@ test('local clocks use the city timezone rather than the browser timezone', () =
   assert.equal(locationClock('Asia/Tokyo', now).time, '21:00');
   assert.equal(locationClock('Europe/London', now).time, '12:00');
   assert.equal(locationClock('Invalid/Zone', now), null);
+});
+
+test('location names use only explicit translations and preserve other names', () => {
   assert.equal(cityName('Astana'), 'Астана');
   assert.equal(cityName('São Paulo'), 'São Paulo');
+  assert.equal(cityName('constructor'), 'constructor');
+  assert.equal(countryName('Kazakhstan'), 'Казахстан');
+  assert.equal(countryName('toString'), 'toString');
 });

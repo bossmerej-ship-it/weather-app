@@ -32,8 +32,8 @@ export function pressureInMm(millibars) {
 const CITY_NAMES = { Astana: 'Астана', Almaty: 'Алматы', London: 'Лондон', Tokyo: 'Токио', Moscow: 'Москва', Paris: 'Париж', 'New York': 'Нью-Йорк', Dubai: 'Дубай', Istanbul: 'Стамбул' };
 const COUNTRY_NAMES = { Kazakhstan: 'Казахстан', Russia: 'Россия', 'United Kingdom': 'Великобритания', Japan: 'Япония', France: 'Франция', 'United States of America': 'США', 'United Arab Emirates': 'ОАЭ', Turkey: 'Турция', Turkiye: 'Турция' };
 
-export const cityName = (name) => CITY_NAMES[name] || name;
-export const countryName = (name) => COUNTRY_NAMES[name] || name;
+export const cityName = (name) => Object.hasOwn(CITY_NAMES, name) ? CITY_NAMES[name] : name;
+export const countryName = (name) => Object.hasOwn(COUNTRY_NAMES, name) ? COUNTRY_NAMES[name] : name;
 
 export function locationClock(timeZone, now = new Date()) {
   try {
