@@ -11,7 +11,8 @@ export class WeatherRequestError extends Error {
 export function mapWeatherError(code) {
   if (code === 1006) return new WeatherRequestError('not-found', 'Не нашли такой город. Проверьте название или введите его на английском.');
   if ([1002, 2006, 2008].includes(code)) return new WeatherRequestError('configuration', 'Сейчас погода недоступна. Попробуйте зайти немного позже.');
-  if ([2007, 2009].includes(code)) return new WeatherRequestError('unavailable', 'Сервис погоды временно недоступен. Попробуйте позже.');
+  if (code === 2007) return new WeatherRequestError('quota', 'Сервис погоды временно недоступен. Попробуйте позже.');
+  if (code === 2009) return new WeatherRequestError('unavailable', 'Сервис погоды временно недоступен. Попробуйте позже.');
   return new WeatherRequestError('unavailable', 'Не удалось загрузить погоду. Проверьте подключение и попробуйте ещё раз.');
 }
 
@@ -59,7 +60,7 @@ export async function requestDashboardWeather(query, options = {}) {
       return { weather: { ...data, forecast: { ...data.forecast, forecastday: days } }, forecastUnavailable: false };
     }
   } catch (error) {
-    if (options.signal?.aborted || error.name === 'AbortError' || ['empty', 'configuration', 'not-found'].includes(error.code)) throw error;
+    if (options.signal?.aborted || error.name === 'AbortError' || ['empty', 'configuration', 'not-found', 'quota'].includes(error.code)) throw error;
     // A plan restriction or failed forecast must not remove the existing current-weather capability.
   }
   options.signal?.throwIfAborted();

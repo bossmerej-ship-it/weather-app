@@ -29,7 +29,7 @@ test('empty city and missing configuration fail before a network request', async
 });
 
 test('provider errors distinguish missing cities from quota and key failures without leaking provider messages', async () => {
-  for (const [code, expected] of [[1006, 'not-found'], [2007, 'unavailable'], [2006, 'configuration'], [9999, 'unavailable']]) {
+  for (const [code, expected] of [[1006, 'not-found'], [2007, 'quota'], [2006, 'configuration'], [9999, 'unavailable']]) {
     await assert.rejects(requestWeather('Astana', { apiKey: 'test-key', fetcher: async () => response({ error: { code, message: 'PRIVATE PROVIDER DETAIL' } }, 400) }), (error) => {
       assert.equal(error.code, expected);
       assert.ok(!error.message.includes('PRIVATE'));
@@ -106,6 +106,16 @@ test('forecast plan restrictions fall back to real current conditions and expose
   assert.equal(result.forecastUnavailable, true);
   assert.deepEqual(result.weather, data);
   assert.ok(!('forecast' in result.weather));
+});
+
+test('an exhausted API key quota does not trigger a fallback request', async () => {
+  const paths = [];
+  const fetcher = async (url) => {
+    paths.push(new URL(url).pathname);
+    return response({ error: { code: 2007 } }, 403);
+  };
+  await assert.rejects(requestDashboardWeather('Astana', { apiKey: 'test-key', fetcher }), { code: 'quota' });
+  assert.deepEqual(paths, ['/v1/forecast.json']);
 });
 
 test('missing or malformed forecasts never become invented days and recover through current.json', async () => {
