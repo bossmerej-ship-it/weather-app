@@ -6,7 +6,23 @@ import { WeatherIcon } from './WeatherIcon';
 export function CurrentWeather({ weather, unit, onChooseCity, loading }) {
   const { current, location } = weather;
   const [now, setNow] = useState(() => new Date());
-  useEffect(() => { const interval = setInterval(() => setNow(new Date()), 30000); return () => clearInterval(interval); }, []);
+  useEffect(() => {
+    let timer;
+
+    function updateClock() {
+      clearTimeout(timer);
+      const time = new Date();
+      setNow(time);
+      timer = setTimeout(updateClock, 60_000 - time.getTime() % 60_000);
+    }
+
+    updateClock();
+    document.addEventListener('visibilitychange', updateClock);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', updateClock);
+    };
+  }, []);
   const clock = location.tz_id ? locationClock(location.tz_id, now) : null;
   const reading = temperature(current.temp_c, unit);
   const unitLabel = '°' + unit.toUpperCase();
