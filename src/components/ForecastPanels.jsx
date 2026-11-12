@@ -42,7 +42,7 @@ export function HourlyForecast({ weather, unit, motion }) {
             data-precipitation={chance > 0 ? 'possible' : undefined}
             title={chance === null ? 'Вероятность недоступна' : `${snow ? 'Снег' : 'Дождь'}: ${chance}%`}
           >
-            <PrecipitationIcon size={13} aria-hidden="true" />
+            {chance !== null && <PrecipitationIcon size={13} aria-hidden="true" />}
             <span>{chance === null ? '—' : `${chance}%`}</span>
           </div>;
         })}</div>
@@ -91,10 +91,9 @@ export function DailyForecast({ weather, unit }) {
         </div>
         <strong className="daily-high"><span className="sr-only">Максимум </span>{temperature(maxtemp_c, unit)}°</strong>
         <span className="daily-chance" data-precipitation={chance > 0 ? 'possible' : undefined}>
-          <PrecipitationIcon size={14} aria-hidden="true" />
           {chance === null
             ? <><span aria-hidden="true">—</span><span className="sr-only">Нет данных об осадках</span></>
-            : <><span className="sr-only">{snow ? 'Снег: ' : 'Дождь: '}</span>{chance}%</>}
+            : <><PrecipitationIcon size={14} aria-hidden="true" /><span className="sr-only">{snow ? 'Снег: ' : 'Дождь: '}</span>{chance}%</>}
         </span>
       </div>;
     })}</div>
