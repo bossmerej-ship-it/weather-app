@@ -64,6 +64,21 @@ test('invalid days, malformed hours and duplicate timestamps do not pollute fore
   assert.equal(formatForecastTime('bad'), null);
 });
 
+test('blank weather descriptions do not appear in hourly or daily forecasts', () => {
+  const blank = { ...condition, text: ' \t ' };
+  const current = hour('2026-11-03 23:00', 1);
+  const invalidHour = hour('2026-11-04 00:00', 0, '+05:00', { condition: blank });
+  const validDay = day('2026-11-03', [current]);
+  const invalidDay = day('2026-11-04', [invalidHour], {
+    day: { mintemp_c: -3, maxtemp_c: 7, condition: blank },
+  });
+  const nextDay = day('2026-11-05', [hour('2026-11-05 00:00', 0, '+05:00', { condition: blank })]);
+  const payload = weather([validDay, invalidDay, nextDay]);
+
+  assert.deepEqual(dailyData(payload), [validDay, nextDay]);
+  assert.deepEqual(upcomingHours(payload), [current]);
+});
+
 test('precipitation preserves reported zeros, missing values and separate rain/snow meanings', () => {
   assert.equal(precipitationChance({ chance_of_rain: 0, chance_of_snow: 0 }), 0);
   assert.equal(precipitationType({ chance_of_rain: 12, chance_of_snow: 80 }), 'snow');

@@ -1,7 +1,8 @@
 import { locationClock, temperature } from './weather.js';
 
 const validChance = (value) => Number.isFinite(value) && value >= 0 && value <= 100;
-const validCondition = (condition) => Number.isFinite(condition?.code) && typeof condition?.text === 'string' && condition.text.length > 0;
+const validCondition = (condition) => Number.isFinite(condition?.code) &&
+  typeof condition?.text === 'string' && condition.text.trim().length > 0;
 const localDate = (weather) => typeof weather?.location?.localtime === 'string' ? weather.location.localtime.slice(0, 10) : null;
 const validDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value || '') &&
   Number.isFinite(Date.parse(`${value}T12:00:00Z`)) && new Date(`${value}T12:00:00Z`).toISOString().slice(0, 10) === value;
