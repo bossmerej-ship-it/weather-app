@@ -41,7 +41,21 @@
    npm ci
    ```
 
-2. Скопируйте [`.env.example`](.env.example) в `.env.local` в корне проекта и укажите свой ключ.
+2. Скопируйте [`.env.example`](.env.example) в `.env.local` в корне проекта.
+
+   macOS / Linux:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Windows PowerShell:
+
+   ```powershell
+   Copy-Item .env.example .env.local
+   ```
+
+   Откройте `.env.local` и укажите свой ключ:
 
    ```dotenv
    VITE_WEATHER_API_KEY=your_weatherapi_key
